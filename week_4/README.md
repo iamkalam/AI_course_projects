@@ -267,7 +267,4 @@ By completing this week's exercises, you should understand:
 - A* Search Algorithm: https://en.wikipedia.org/wiki/A*_search_algorithm
 - 8-Puzzle Problem: https://en.wikipedia.org/wiki/15_puzzle
 
----
-
-*Generated for FAST NUCES AI Lab - Week 4*
 
