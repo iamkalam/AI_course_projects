@@ -1,6 +1,6 @@
 # 🤖 AI Algorithms Lab
 
-> A comprehensive collection of search algorithms implementations for FAST NUCES AI Lab
+> A comprehensive collection of search algorithms implementations for the FAST NUCES AI Lab
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue)
 ![Status](https://img.shields.io/badge/Status-Active-green)
@@ -262,17 +262,17 @@ This is a learning repository. Feel free to:
 
 ## License
 
-This project is for educational purposes as part of FAST NUCES AI Lab.
+This project is for educational purposes as part of the FAST NUCES AI Lab.
 
 ---
 
 ## Author
-
+- Name: Abdul Kalam 
 **FAST NUCES AI Lab**
 - Course: Artificial Intelligence
-- Semester: [Current]
+- Semester: 6th 2026
 
-*Last Updated: 2024*
+*Last Updated: 2026*
 
 ---
 
