@@ -1,0 +1,10 @@
+==================================================
+CHAT HISTORY - FAST-ChatBot
+Session: 2026-03-07 19:48:41
+==================================================
+
+
+==================================================
+Final Sentiment: neutral
+Total Positive Words: 0
+Total Negative Words: 0
