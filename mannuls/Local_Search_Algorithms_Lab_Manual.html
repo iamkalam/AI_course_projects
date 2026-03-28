@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Manual — Local Search Algorithms | FAST University — Hamza Raziq Khan</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Code+Pro:wght@400;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f1a;
+  --surface: #1a1a2e;
+  --surface2: #222240;
+  --accent: #f7b731;
+  --accent2: #fc5c65;
+  --accent3: #45aaf2;
+  --accent4: #26de81;
+  --text: #e8e8f0;
+  --text-dim: #8888aa;
+  --code-bg: #12121f;
+  --border: #2a2a4a;
+  --glow: rgba(247, 183, 49, 0.15);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 17px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+::selection { background: var(--accent); color: var(--bg); }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(247,183,49,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247,183,49,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.container { max-width: 1000px; margin: 0 auto; padding: 0 30px; position: relative; z-index: 1; }
+
+/* ── Cover ── */
+.cover {
+  min-height: 100vh; display: flex; flex-direction: column;
+  justify-content: center; align-items: center; text-align: center;
+  position: relative; overflow: hidden;
+}
+.cover::before {
+  content: ''; position: absolute; width: 600px; height: 600px;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  opacity: 0.08; top: -200px; right: -200px; border-radius: 50%;
+}
+.cover-badge {
+  display: inline-block; padding: 8px 24px; border: 1px solid var(--accent);
+  border-radius: 100px; font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 30px; animation: fadeDown 0.8s ease-out;
+}
+.cover h1 {
+  font-family: 'Playfair Display', serif; font-size: clamp(42px, 7vw, 80px);
+  font-weight: 900; line-height: 1.1; margin-bottom: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  animation: fadeUp 0.8s ease-out 0.2s both;
+}
+.cover h2 {
+  font-family: 'Nunito', sans-serif; font-size: 22px; font-weight: 400;
+  color: var(--text-dim); margin-bottom: 40px; animation: fadeUp 0.8s ease-out 0.4s both;
+}
+.cover-topics {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;
+  animation: fadeUp 0.8s ease-out 0.6s both;
+}
+.cover-topics span { padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 700; }
+.cover-topics span:nth-child(1) { background: rgba(247,183,49,0.15); color: var(--accent); }
+.cover-topics span:nth-child(2) { background: rgba(252,92,101,0.15); color: var(--accent2); }
+.cover-topics span:nth-child(3) { background: rgba(69,170,242,0.15); color: var(--accent3); }
+.cover-topics span:nth-child(4) { background: rgba(38,222,129,0.15); color: var(--accent4); }
+.cover-scroll { position: absolute; bottom: 40px; color: var(--text-dim); font-size: 14px; animation: bounce 2s infinite; }
+
+/* ── TOC ── */
+.toc { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px; margin: 60px 0; }
+.toc h2 { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 20px; color: var(--accent); }
+.toc ol { padding-left: 24px; }
+.toc li { margin-bottom: 8px; }
+.toc a { color: var(--accent3); text-decoration: none; transition: color 0.2s; }
+.toc a:hover { color: var(--accent); }
+
+/* ── Sections ── */
+section { margin-bottom: 80px; }
+.section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 30px; padding-bottom: 16px; border-bottom: 2px solid var(--border); }
+.section-num {
+  width: 50px; height: 50px; border-radius: 12px; display: flex;
+  align-items: center; justify-content: center; font-weight: 900; font-size: 20px; flex-shrink: 0;
+}
+.section-header h2 { font-family: 'Playfair Display', serif; font-size: 32px; }
+.clr-hc .section-num { background: rgba(247,183,49,0.2); color: var(--accent); }
+.clr-hc h2 { color: var(--accent); }
+.clr-sa .section-num { background: rgba(252,92,101,0.2); color: var(--accent2); }
+.clr-sa h2 { color: var(--accent2); }
+.clr-lb .section-num { background: rgba(69,170,242,0.2); color: var(--accent3); }
+.clr-lb h2 { color: var(--accent3); }
+.clr-ts .section-num { background: rgba(38,222,129,0.2); color: var(--accent4); }
+.clr-ts h2 { color: var(--accent4); }
+h3 { font-size: 22px; margin: 30px 0 14px; color: var(--text); }
+h4 { font-size: 18px; margin: 20px 0 10px; color: var(--text-dim); }
+p { margin-bottom: 14px; }
+
+/* ── Callout boxes ── */
+.callout { border-radius: 12px; padding: 20px 24px; margin: 20px 0; border-left: 4px solid; }
+.callout-analogy { background: rgba(247,183,49,0.08); border-color: var(--accent); }
+.callout-warning { background: rgba(252,92,101,0.08); border-color: var(--accent2); }
+.callout-tip { background: rgba(38,222,129,0.08); border-color: var(--accent4); }
+.callout-fun { background: rgba(69,170,242,0.08); border-color: var(--accent3); }
+.callout-title { font-weight: 800; margin-bottom: 6px; font-size: 15px; }
+.callout-analogy .callout-title { color: var(--accent); }
+.callout-warning .callout-title { color: var(--accent2); }
+.callout-tip .callout-title { color: var(--accent4); }
+.callout-fun .callout-title { color: var(--accent3); }
+
+/* ── Code blocks ── */
+.code-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; margin: 20px 0; overflow: hidden; }
+.code-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 20px; background: var(--surface2); border-bottom: 1px solid var(--border);
+  font-size: 13px; color: var(--text-dim);
+}
+.code-header .lang { color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.code-block pre {
+  padding: 20px; overflow-x: auto; font-family: 'Source Code Pro', monospace;
+  font-size: 13.5px; line-height: 1.8; color: #c8c8e0; white-space: pre; tab-size: 4;
+}
+.cm { color: #5a5a7a; font-style: italic; }
+.kw { color: var(--accent2); }
+.st { color: var(--accent4); }
+.fn { color: var(--accent3); }
+.nu { color: var(--accent); }
+.dc { color: #c678dd; }
+.ann { color: #e5c07b; }
+
+/* ── Viz containers ── */
+.viz-container { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin: 24px 0; text-align: center; }
+.viz-container canvas { border-radius: 8px; display: block; margin: 0 auto; max-width: 100%; }
+.viz-controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+.viz-btn {
+  padding: 8px 20px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--surface2); color: var(--text); font-family: 'Nunito'; font-size: 14px;
+  cursor: pointer; transition: all 0.2s;
+}
+.viz-btn:hover { border-color: var(--accent); color: var(--accent); }
+.viz-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.viz-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.viz-label { font-size: 13px; color: var(--text-dim); margin-top: 8px; }
+
+/* Speed control */
+.speed-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.speed-btn {
+  padding: 4px 14px; border: 1px solid var(--border); border-radius: 6px;
+  background: transparent; color: var(--text-dim); font-family: 'Nunito'; font-size: 12px;
+  cursor: pointer; transition: all 0.2s;
+}
+.speed-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 700; }
+.speed-btn:hover { border-color: var(--accent); }
+
+/* Info panel for live stats */
+.info-panel {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;
+  margin-top: 12px; text-align: center;
+}
+.info-card {
+  background: var(--surface2); border-radius: 8px; padding: 8px 12px;
+}
+.info-card .label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+.info-card .value { font-size: 16px; font-weight: 800; font-family: 'Source Code Pro', monospace; }
+
+/* ── Comparison table ── */
+.comp-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+.comp-table th { background: var(--surface2); padding: 14px 16px; text-align: left; font-weight: 700; border-bottom: 2px solid var(--accent); }
+.comp-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.comp-table tr:hover td { background: rgba(247,183,49,0.04); }
+
+/* ── Lab tasks ── */
+.task-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin: 20px 0; position: relative; overflow: hidden; }
+.task-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; }
+.task-card:nth-child(odd)::before { background: var(--accent); }
+.task-card:nth-child(even)::before { background: var(--accent3); }
+.task-num { display: inline-block; padding: 4px 14px; border-radius: 6px; font-size: 12px; font-weight: 800; letter-spacing: 1px; margin-bottom: 12px; }
+.task-card:nth-child(odd) .task-num { background: rgba(247,183,49,0.15); color: var(--accent); }
+.task-card:nth-child(even) .task-num { background: rgba(69,170,242,0.15); color: var(--accent3); }
+
+/* ── Pseudocode ── */
+.pseudo {
+  background: var(--surface); border: 1px dashed var(--border); border-radius: 10px;
+  padding: 20px 24px; margin: 16px 0; font-family: 'Source Code Pro', monospace;
+  font-size: 14px; line-height: 1.9; color: #b0b0d0;
+}
+.pseudo strong { color: var(--accent2); font-weight: 600; }
+.pseudo em { color: var(--accent3); font-style: normal; }
+
+/* ── Flowchart ── */
+.flowchart { display: flex; flex-direction: column; align-items: center; gap: 4px; margin: 20px 0; }
+.flow-box { padding: 12px 28px; border-radius: 10px; font-weight: 700; font-size: 14px; text-align: center; min-width: 220px; }
+.flow-arrow { font-size: 22px; color: var(--text-dim); }
+.flow-decision { border-radius: 0; border: 2px dashed var(--accent); background: transparent !important; color: var(--accent) !important; }
+
+/* ── Quiz ── */
+.quiz-box { background: var(--surface2); border-radius: 12px; padding: 24px; margin: 20px 0; }
+.quiz-option {
+  display: block; padding: 10px 16px; margin: 6px 0; border: 1px solid var(--border);
+  border-radius: 8px; cursor: pointer; transition: all 0.2s; font-family: 'Nunito'; font-size: 15px;
+  background: transparent; color: var(--text); width: 100%; text-align: left;
+}
+.quiz-option:hover { border-color: var(--accent3); }
+.quiz-option.correct { border-color: var(--accent4); background: rgba(38,222,129,0.1); }
+.quiz-option.wrong { border-color: var(--accent2); background: rgba(252,92,101,0.1); }
+.quiz-feedback { margin-top: 10px; font-weight: 700; min-height: 24px; }
+
+/* ── Footer ── */
+footer { text-align: center; padding: 60px 0; color: var(--text-dim); font-size: 14px; border-top: 1px solid var(--border); margin-top: 80px; }
+
+/* ── Animations ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(247,183,49,0.3); } 50% { box-shadow: 0 0 20px 4px rgba(247,183,49,0.15); } }
+.reveal { opacity: 0; transform: translateY(40px); transition: all 0.7s ease-out; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 700px) {
+  .container { padding: 0 16px; }
+  .cover h1 { font-size: 36px; }
+  .code-block pre { font-size: 12px; padding: 14px; }
+  .comp-table { font-size: 14px; }
+  .comp-table th, .comp-table td { padding: 8px; }
+  .info-panel { grid-template-columns: 1fr 1fr; }
+}
+
+/* Legend dots */
+.legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 10px; font-size: 13px; }
+.legend span::before { content: ''; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<!-- ════════════════════ COVER ════════════════════ -->
+<div class="cover">
+  <div class="cover-badge">FAST National University — Department of Computer Science</div>
+  <h1>Local Search<br>Algorithms</h1>
+  <h2>The Art of Finding "Good Enough" Without Exploring Everything</h2>
+  <div class="cover-topics">
+    <span>🏔️ Hill Climbing</span>
+    <span>🌡️ Simulated Annealing</span>
+    <span>🔦 Local Beam Search</span>
+    <span>🚫 Tabu Search</span>
+  </div>
+  <div style="margin-top:36px;padding:16px 32px;border:1px solid var(--border);border-radius:12px;background:var(--surface);animation:fadeUp 0.8s ease-out 0.8s both;text-align:center;">
+    <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;">Prepared by</div>
+    <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--accent);">Hamza Raziq Khan</div>
+    <div style="font-size:14px;color:var(--text-dim);margin-top:4px;">Instructor — Department of Computer Science</div>
+    <div style="font-size:14px;color:var(--text-dim);">FAST National University of Computer and Emerging Sciences</div>
+  </div>
+  <div class="cover-scroll">▼ Scroll to begin the adventure ▼</div>
+</div>
+
+<div class="container">
+
+<!-- ════════════════════ TOC ════════════════════ -->
+<nav class="toc reveal">
+  <h2>📖 Table of Contents</h2>
+  <ol>
+    <li><a href="#intro">Introduction — Why Local Search?</a></li>
+    <li><a href="#hc">Hill Climbing — The Greedy Mountaineer</a></li>
+    <li><a href="#sa">Simulated Annealing — The Chill Optimizer</a></li>
+    <li><a href="#lbs">Local Beam Search — The Search Party</a></li>
+    <li><a href="#ts">Tabu Search — The Elephant That Never Forgets</a></li>
+    <li><a href="#compare">Grand Comparison</a></li>
+    <li><a href="#playground">Algorithm Race Playground</a></li>
+    <li><a href="#quiz">Quick-Fire Quiz</a></li>
+    <li><a href="#tasks">Lab Tasks</a></li>
+  </ol>
+</nav>
+
+<!-- ════════════════════ 1. INTRODUCTION ════════════════════ -->
+<section id="intro" class="reveal">
+  <div class="section-header clr-hc">
+    <div class="section-num">1</div>
+    <h2>Introduction — Why Local Search?</h2>
+  </div>
+
+  <h3>The Problem with Being a Perfectionist</h3>
+  <p>
+    Imagine you're at a massive food festival with <strong>10,000 stalls</strong>. You want the tastiest biryani.
+    One approach: taste biryani at <em>every single stall</em> (exhaustive search). By stall #347 you'd be in the hospital.
+    The smarter approach? Start somewhere, taste the biryani, look at nearby stalls, and keep moving toward the one that
+    <em>smells</em> better. That's <strong>local search</strong>.
+  </p>
+
+  <div class="callout callout-analogy">
+    <div class="callout-title">🧠 Core Idea</div>
+    <strong>Local search</strong> algorithms start from an initial state and iteratively move to <strong>neighbor states</strong>.
+    They don't keep track of paths or an explored set. They use almost <strong>constant memory</strong> and can find
+    good (often optimal) solutions in huge or infinite state spaces where systematic algorithms would fail.
+  </div>
+
+  <h3>When Do We Use Local Search?</h3>
+  <p>
+    Local search shines when: (1) the <strong>goal state itself is the solution</strong> (e.g., find the best arrangement),
+    (2) the search space is <strong>astronomically large</strong> (TSP, scheduling, VLSI design),
+    (3) you need a <strong>good-enough answer fast</strong>, and (4) you have <strong>limited memory</strong>.
+  </p>
+
+  <h3>Key Vocabulary</h3>
+  <table class="comp-table">
+    <tr><th>Term</th><th>Meaning</th><th>Real-World Analogy</th></tr>
+    <tr><td><strong>State</strong></td><td>A complete configuration</td><td>Your current position on a mountain</td></tr>
+    <tr><td><strong>Neighbor</strong></td><td>A state reachable by a small change</td><td>One step in any direction</td></tr>
+    <tr><td><strong>Objective Function</strong></td><td>Evaluates how good a state is</td><td>The altitude at your position</td></tr>
+    <tr><td><strong>Global Optimum</strong></td><td>The absolute best state</td><td>The tallest peak on the entire range</td></tr>
+    <tr><td><strong>Local Optimum</strong></td><td>Best among neighbors, but not globally</td><td>Top of a small hill — great until you see Everest</td></tr>
+    <tr><td><strong>Plateau</strong></td><td>Flat region, no neighbor is better</td><td>A tableland — no gradient to follow</td></tr>
+    <tr><td><strong>Ridge</strong></td><td>Narrow elevated region, hard to navigate</td><td>A knife-edge — one wrong step and you descend</td></tr>
+  </table>
+
+  <h3>The State-Space Landscape</h3>
+  <p>
+    Think of the search space as a <strong>3D landscape</strong>. Each point is a state, height is the objective value.
+    Our job: find the <strong>highest peak</strong> (maximization) or the <strong>deepest valley</strong> (minimization).
+    Every algorithm in this lab is a different <em>strategy for hiking this landscape</em>.
+  </p>
+
+  <div class="viz-container">
+    <canvas id="landscapeCanvas" width="700" height="300"></canvas>
+    <div class="viz-controls">
+      <button class="viz-btn active" onclick="drawLandscape('peaks', this)">Multi-Peak</button>
+      <button class="viz-btn" onclick="drawLandscape('flat', this)">Plateau</button>
+      <button class="viz-btn" onclick="drawLandscape('ridge', this)">Ridge</button>
+    </div>
+    <div class="viz-label">▲ Click buttons to see different landscape challenges algorithms face</div>
+  </div>
+</section>
+
+<!-- ════════════════════ 2. HILL CLIMBING ════════════════════ -->
+<section id="hc" class="reveal">
+  <div class="section-header clr-hc">
+    <div class="section-num">2</div>
+    <h2>Hill Climbing — The Greedy Mountaineer</h2>
+  </div>
+
+  <div class="callout callout-fun">
+    <div class="callout-title">🎭 The Analogy</div>
+    You're <strong>blindfolded on a mountain range</strong>. You can only feel the ground under your feet
+    and one step in each direction. You always step uphill. When there's no uphill step? You declare:
+    <em>"I've reached the top!"</em> (Spoiler: you might be on a tiny hill while Everest is 2 km away. 😬)
+  </div>
+
+  <h3>How It Works (Step by Step)</h3>
+  <div class="flowchart">
+    <div class="flow-box" style="background:rgba(247,183,49,0.2);color:var(--accent);">Step 1: Pick a random starting point</div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-box" style="background:rgba(69,170,242,0.15);color:var(--accent3);">Step 2: Look at all neighboring states</div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-box flow-decision">Step 3: Is any neighbor BETTER than where I am now?</div>
+    <div class="flow-arrow">YES → move to the best neighbor &nbsp; | &nbsp; NO → STOP (you're stuck!)</div>
+    <div class="flow-box" style="background:rgba(38,222,129,0.15);color:var(--accent4);">Return: current state (local optimum — maybe global, maybe not)</div>
+  </div>
+
+  <h3>Pseudocode</h3>
+  <div class="pseudo">
+    <strong>function</strong> HILL-CLIMBING(<em>problem</em>):<br>
+    &nbsp;&nbsp;<em>current</em> ← <em>problem</em>.INITIAL-STATE<br>
+    &nbsp;&nbsp;<strong>loop</strong>:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<em>neighbor</em> ← highest-valued successor of <em>current</em><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> VALUE(<em>neighbor</em>) ≤ VALUE(<em>current</em>):<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>return</strong> <em>current</em> &nbsp;&nbsp;<span style="color:var(--text-dim);">// stuck — no neighbor is better</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<em>current</em> ← <em>neighbor</em>
+  </div>
+
+  <h3>Variants</h3>
+  <table class="comp-table">
+    <tr><th>Variant</th><th>How It Picks Next State</th><th>Pros</th><th>Cons</th></tr>
+    <tr><td><strong>Steepest-Ascent</strong></td><td>Evaluates ALL neighbors, picks the best</td><td>Most thorough per step</td><td>Slow when many neighbors</td></tr>
+    <tr><td><strong>First-Choice</strong></td><td>Generates random neighbors until one is better</td><td>Fast with huge neighbor sets</td><td>May miss the steepest path</td></tr>
+    <tr><td><strong>Stochastic</strong></td><td>Randomly picks among uphill neighbors</td><td>Explores more diverse directions</td><td>Can be slower to converge</td></tr>
+    <tr><td><strong>Random-Restart</strong></td><td>Runs HC multiple times from random starts</td><td>If p = success prob, expected restarts = 1/p</td><td>Requires many runs</td></tr>
+  </table>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">⚠️ The Three Villains of Hill Climbing</div>
+    <strong>1. Local Maxima</strong> — A peak that isn't the highest. All neighbors are worse, so HC stops.<br>
+    <strong>2. Plateaus</strong> — Flat regions. No neighbor is better. HC has no gradient to follow.<br>
+    <strong>3. Ridges</strong> — Narrow elevated paths. Neighbors slope down on both sides. Progress requires moving sideways first.
+  </div>
+
+  <h3>🐍 Python Code — Fully Explained</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="lang">Python</span><span>hill_climbing.py — read every comment!</span></div>
+    <pre><span class="cm"># =====================================================</span>
+<span class="cm">#  HILL CLIMBING — The simplest local search algorithm</span>
+<span class="cm"># =====================================================</span>
+<span class="cm">#  WHAT IT DOES:</span>
+<span class="cm">#    Start somewhere random → look around → move to the</span>
+<span class="cm">#    best nearby spot → repeat until stuck.</span>
+<span class="cm">#</span>
+<span class="cm">#  WHEN TO USE:  Quick answers, smooth landscapes.</span>
+<span class="cm">#  WEAKNESS:     Gets stuck at local optima (small hills).</span>
+<span class="cm"># =====================================================</span>
+
+<span class="kw">import</span> random
+<span class="kw">import</span> math
+
+
+<span class="cm"># ----- STEP 1: Define the problem -----</span>
+<span class="cm"># This is the "landscape" we're searching.</span>
+<span class="cm"># It's a wavy function with MULTIPLE PEAKS — some tall, some short.</span>
+<span class="cm"># Our goal: find the x value that gives the HIGHEST output.</span>
+
+<span class="kw">def</span> <span class="fn">objective</span>(x):
+    <span class="st">"""
+    The function we want to MAXIMIZE.
+    
+    Think of it as a mountain range:
+       - Input x  = your position (where you're standing)
+       - Output   = the altitude at that position
+       - GOAL     = find the position with the HIGHEST altitude
+    
+    This particular function has ~5 peaks between x=0 and x=20,
+    which makes it perfect for showing how HC gets stuck.
+    """</span>
+    <span class="kw">return</span> math.sin(x) * math.cos(x / <span class="nu">2</span>) * math.sin(x / <span class="nu">3</span>)
+
+
+<span class="cm"># ----- STEP 2: Define what a "neighbor" means -----</span>
+<span class="cm"># A neighbor is a point CLOSE to where we are now.</span>
+<span class="cm"># We generate it by adding a small random nudge to our position.</span>
+
+<span class="kw">def</span> <span class="fn">get_neighbor</span>(x, step_size=<span class="nu">0.1</span>):
+    <span class="st">"""
+    Generate a neighbor of x.
+    
+    Example: if x = 5.0 and step_size = 0.1
+             neighbor could be anywhere from 4.9 to 5.1
+    
+    WHY random?  So we explore different directions each time.
+    WHY small?   Big steps would skip over peaks.
+    """</span>
+    nudge = random.uniform(-step_size, step_size)
+    <span class="kw">return</span> x + nudge
+
+
+<span class="cm"># ----- STEP 3: The Hill Climbing algorithm itself -----</span>
+
+<span class="kw">def</span> <span class="fn">hill_climbing</span>(lower=<span class="nu">0</span>, upper=<span class="nu">20</span>, max_iterations=<span class="nu">1000</span>, step_size=<span class="nu">0.1</span>):
+    <span class="st">"""
+    Hill Climbing (Steepest-Ascent style for 1D problems).
+    
+    ALGORITHM IN PLAIN ENGLISH:
+        1. Stand at a random spot
+        2. Look around (check a neighbor)
+        3. If the neighbor is HIGHER → walk there
+        4. If the neighbor is LOWER  → stay put
+        5. Repeat until you can't go higher
+    
+    PARAMETERS:
+        lower, upper    = boundaries of our search space [0, 20]
+        max_iterations  = safety limit (stop even if not stuck)
+        step_size       = how far to look for neighbors
+    
+    RETURNS:
+        best_x     = the x-coordinate of the peak we found
+        best_value = the height at that peak
+        path       = list of (x, value) showing our journey
+    """</span>
+
+    <span class="cm"># === INITIALIZATION ===</span>
+    <span class="cm"># Pick a random starting point (like being dropped blindfolded)</span>
+    current_x     = random.uniform(lower, upper)
+    current_value = objective(current_x)
+
+    <span class="cm"># Keep a record of everywhere we've been (for plotting later)</span>
+    path = [(current_x, current_value)]
+
+    <span class="cm"># === MAIN LOOP ===</span>
+    <span class="kw">for</span> step <span class="kw">in</span> range(max_iterations):
+
+        <span class="cm"># Look at a nearby point</span>
+        neighbor_x = get_neighbor(current_x, step_size)
+
+        <span class="cm"># Make sure we don't wander outside the search space</span>
+        neighbor_x = max(lower, min(upper, neighbor_x))
+
+        <span class="cm"># How good is this neighbor?</span>
+        neighbor_value = objective(neighbor_x)
+
+        <span class="cm"># THE KEY DECISION: Is the neighbor better?</span>
+        <span class="kw">if</span> neighbor_value > current_value:
+            <span class="cm"># YES → Move there! This is the "climbing" part.</span>
+            current_x     = neighbor_x
+            current_value = neighbor_value
+            path.append((current_x, current_value))
+        <span class="cm"># NO → Stay where we are. (This is why HC gets stuck!)</span>
+        <span class="cm">#       It NEVER accepts a worse move.</span>
+
+    <span class="cm"># === DONE ===</span>
+    <span class="kw">return</span> current_x, current_value, path
+
+
+<span class="cm"># ----- STEP 4: Random-Restart Hill Climbing -----</span>
+<span class="cm"># Idea: "If at first you don't succeed, try, try again."</span>
+<span class="cm"># Run HC multiple times from different starting points.</span>
+<span class="cm"># Keep the BEST result across all runs.</span>
+
+<span class="kw">def</span> <span class="fn">random_restart_hill_climbing</span>(num_restarts=<span class="nu">10</span>, **kwargs):
+    <span class="st">"""
+    Run hill_climbing() multiple times, keep the best result.
+    
+    WHY THIS WORKS:
+        Each restart drops us at a DIFFERENT random spot.
+        Even if one run gets stuck on a small hill,
+        another run might start near the tallest peak.
+    
+    MATH INSIGHT:
+        If each run has probability p of finding the global max,
+        then after k restarts, failure probability = (1-p)^k
+        → approaches 0 as k grows!
+    """</span>
+    best_x     = <span class="kw">None</span>
+    best_value = float(<span class="st">'-inf'</span>)   <span class="cm"># Start with worst possible</span>
+    best_path  = []
+
+    <span class="kw">for</span> restart <span class="kw">in</span> range(num_restarts):
+        x, value, path = hill_climbing(**kwargs)
+
+        <span class="cm"># Is this run's result better than our all-time best?</span>
+        <span class="kw">if</span> value > best_value:
+            best_x, best_value, best_path = x, value, path
+
+    <span class="kw">return</span> best_x, best_value, best_path
+
+
+<span class="cm"># ----- RUN IT -----</span>
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    <span class="cm"># Single run</span>
+    x, val, path = hill_climbing()
+    print(f<span class="st">"Single HC  → x={x:.4f}, f(x)={val:.4f}, steps={len(path)}"</span>)
+
+    <span class="cm"># 20 restarts</span>
+    x2, val2, path2 = random_restart_hill_climbing(num_restarts=<span class="nu">20</span>)
+    print(f<span class="st">"Restart HC → x={x2:.4f}, f(x)={val2:.4f} (best of 20 runs)"</span>)</pre>
+  </div>
+
+  <h3>🎮 Interactive Visualization — Watch Hill Climbing Step by Step</h3>
+  <div class="viz-container" id="hcVizBox">
+    <canvas id="hcCanvas" width="700" height="340"></canvas>
+    <div class="viz-controls">
+      <button class="viz-btn" id="hcRunBtn" onclick="hcViz.start()">▶ Start</button>
+      <button class="viz-btn" id="hcPauseBtn" onclick="hcViz.pause()" disabled>⏸ Pause</button>
+      <button class="viz-btn" onclick="hcViz.step()" id="hcStepBtn">⏭ Step</button>
+      <button class="viz-btn" onclick="hcViz.reset()">🔄 Reset</button>
+    </div>
+    <div class="speed-row">
+      <span style="font-size:12px;color:var(--text-dim);">Speed:</span>
+      <button class="speed-btn" onclick="hcViz.setSpeed(600,this)">🐢 Slow</button>
+      <button class="speed-btn active" onclick="hcViz.setSpeed(200,this)">🚶 Medium</button>
+      <button class="speed-btn" onclick="hcViz.setSpeed(50,this)">🏃 Fast</button>
+    </div>
+    <div class="info-panel">
+      <div class="info-card"><div class="label">Step</div><div class="value" id="hcStep">0</div></div>
+      <div class="info-card"><div class="label">Position (x)</div><div class="value" id="hcX">—</div></div>
+      <div class="info-card"><div class="label">f(x) Value</div><div class="value" id="hcVal">—</div></div>
+      <div class="info-card"><div class="label">Status</div><div class="value" id="hcState" style="font-size:13px;">Ready</div></div>
+    </div>
+  </div>
+
+  <div class="callout callout-tip">
+    <div class="callout-title">💡 Key Takeaway</div>
+    Hill climbing is <strong>fast, simple, and uses O(1) memory</strong>. But it's like a near-sighted hiker —
+    it only sees what's immediately around it. For problems with many local optima, you need something that
+    occasionally accepts <em>worse</em> moves. Enter: Simulated Annealing. 👇
+  </div>
+</section>
+
+<!-- ════════════════════ 3. SIMULATED ANNEALING ════════════════════ -->
+<section id="sa" class="reveal">
+  <div class="section-header clr-sa">
+    <div class="section-num">3</div>
+    <h2>Simulated Annealing — The Chill Optimizer</h2>
+  </div>
+
+  <div class="callout callout-fun">
+    <div class="callout-title">🎭 The Analogy</div>
+    You're searching for the <strong>best restaurant in a huge city</strong>. Early in the night (high temperature),
+    you're adventurous — you'll try random shady alleys and weird food trucks. As the night goes on (temperature drops),
+    you get pickier. By midnight, you're only going to places rated 4.9+. This "cool down from chaos to order" is
+    <strong>simulated annealing</strong> — inspired by how blacksmiths cool metal slowly to make it stronger!
+  </div>
+
+  <div class="callout callout-analogy">
+    <div class="callout-title">🔑 The Key Insight vs Hill Climbing</div>
+    Unlike hill climbing, SA <strong>sometimes accepts worse moves</strong>! This lets it <em>escape</em> local optima.
+    The probability of accepting a bad move <strong>decreases over time</strong> as the "temperature" cools.
+  </div>
+
+  <h3>The Acceptance Probability</h3>
+  <p>When a neighbor is <strong>worse</strong> by an amount ΔE:</p>
+  <div style="text-align:center;font-size:24px;margin:20px 0;font-family:'Playfair Display',serif;color:var(--accent2);">
+    P(accept worse move) = e<sup>  ΔE / T</sup>
+  </div>
+  <p><strong>T high</strong> → P ≈ 1 (accept almost anything — exploring!). <strong>T low</strong> → P ≈ 0 (only accept improvements — exploiting!).</p>
+
+  <h3>Pseudocode</h3>
+  <div class="pseudo">
+    <strong>function</strong> SIMULATED-ANNEALING(<em>problem</em>, <em>schedule</em>):<br>
+    &nbsp;&nbsp;<em>current</em> ← <em>problem</em>.INITIAL-STATE<br>
+    &nbsp;&nbsp;<strong>for</strong> t = 1 <strong>to</strong> ∞:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;T ← <em>schedule</em>(t) &nbsp;<span style="color:var(--text-dim);">// temperature at time t</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> T = 0: <strong>return</strong> <em>current</em><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<em>next</em> ← random neighbor of <em>current</em><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;ΔE ← VALUE(<em>next</em>) − VALUE(<em>current</em>)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> ΔE > 0: <em>current</em> ← <em>next</em> &nbsp;<span style="color:var(--text-dim);">// better → always accept</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>else</strong>: <em>current</em> ← <em>next</em> with probability e<sup>ΔE/T</sup> &nbsp;<span style="color:var(--text-dim);">// worse → maybe accept</span>
+  </div>
+
+  <h3>Cooling Schedules</h3>
+  <table class="comp-table">
+    <tr><th>Schedule</th><th>Formula</th><th>Behavior</th></tr>
+    <tr><td><strong>Linear</strong></td><td>T = T₀ − α·t</td><td>Steady decrease. Simple but crude.</td></tr>
+    <tr><td><strong>Geometric</strong></td><td>T = T₀ · α<sup>t</sup> (α ≈ 0.95–0.99)</td><td>Most popular. Smooth exponential decay.</td></tr>
+    <tr><td><strong>Logarithmic</strong></td><td>T = T₀ / ln(t + 1)</td><td>Theoretically guarantees global optimum (but very slow).</td></tr>
+  </table>
+
+  <h3>🐍 Python Code — Fully Explained</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="lang">Python</span><span>simulated_annealing.py</span></div>
+    <pre><span class="cm"># =====================================================</span>
+<span class="cm">#  SIMULATED ANNEALING — Hill Climbing that can go downhill!</span>
+<span class="cm"># =====================================================</span>
+<span class="cm">#  WHAT IT DOES:</span>
+<span class="cm">#    Like hill climbing, BUT it sometimes accepts WORSE moves.</span>
+<span class="cm">#    This allows it to ESCAPE local optima.</span>
+<span class="cm">#</span>
+<span class="cm">#  THE BIG IDEA:</span>
+<span class="cm">#    Early on  → high temperature → wild, accepts bad moves</span>
+<span class="cm">#    Later    → low temperature  → calm, only accepts good moves</span>
+<span class="cm">#</span>
+<span class="cm">#  REAL-WORLD ORIGIN:</span>
+<span class="cm">#    Inspired by metallurgy — heating metal then cooling slowly</span>
+<span class="cm">#    lets atoms settle into the strongest crystal structure.</span>
+<span class="cm"># =====================================================</span>
+
+<span class="kw">import</span> random, math
+
+
+<span class="kw">def</span> <span class="fn">objective</span>(x):
+    <span class="st">"""Same wavy landscape with multiple peaks."""</span>
+    <span class="kw">return</span> math.sin(x) * math.cos(x / <span class="nu">2</span>) * math.sin(x / <span class="nu">3</span>)
+
+
+<span class="kw">def</span> <span class="fn">simulated_annealing</span>(
+    lower       = <span class="nu">0</span>,       <span class="cm"># Left boundary of search space</span>
+    upper       = <span class="nu">20</span>,      <span class="cm"># Right boundary of search space</span>
+    T_initial   = <span class="nu">1.5</span>,     <span class="cm"># Starting temperature (HIGH = more exploration)</span>
+    T_min       = <span class="nu">0.001</span>,   <span class="cm"># Stop when temperature falls below this</span>
+    cooling     = <span class="nu">0.995</span>,   <span class="cm"># Multiply T by this each step (0.995 = slow cool)</span>
+    step_size   = <span class="nu">0.5</span>,     <span class="cm"># How far neighbors can be (bigger = bolder jumps)</span>
+    max_iter    = <span class="nu">10000</span>    <span class="cm"># Safety stop</span>
+):
+    <span class="st">"""
+    Simulated Annealing to MAXIMIZE the objective function.
+    
+    ALGORITHM IN PLAIN ENGLISH:
+        1. Start at a random spot. Set temperature HIGH.
+        2. Pick a random neighbor.
+        3. If neighbor is BETTER → move there (always).
+        4. If neighbor is WORSE  → MAYBE move there.
+           The probability depends on:
+             - HOW much worse (small difference → more likely)
+             - Current temperature (hot → more likely)
+           Formula: probability = e^(delta / temperature)
+        5. Cool down the temperature slightly.
+        6. Repeat until temperature is near zero.
+    
+    RETURNS:
+        best_x, best_value  = the BEST solution ever seen
+        history             = list of (x, value, temperature) for plotting
+    """</span>
+
+    <span class="cm"># === SETUP ===</span>
+    current_x     = random.uniform(lower, upper)
+    current_value = objective(current_x)
+
+    <span class="cm"># IMPORTANT: Track the BEST-EVER solution separately!</span>
+    <span class="cm"># Because SA can move AWAY from good solutions,</span>
+    <span class="cm"># we need to remember the best we've ever found.</span>
+    best_x     = current_x
+    best_value = current_value
+
+    temperature = T_initial
+    history     = [(current_x, current_value, temperature)]
+
+    <span class="cm"># === MAIN LOOP ===</span>
+    <span class="kw">for</span> step <span class="kw">in</span> range(max_iter):
+
+        <span class="cm"># Are we cold enough to stop?</span>
+        <span class="kw">if</span> temperature < T_min:
+            <span class="kw">break</span>
+
+        <span class="cm"># Pick a random neighbor</span>
+        neighbor_x = current_x + random.uniform(-step_size, step_size)
+        neighbor_x = max(lower, min(upper, neighbor_x))  <span class="cm"># Stay in bounds</span>
+        neighbor_value = objective(neighbor_x)
+
+        <span class="cm"># How much better/worse is the neighbor?</span>
+        delta = neighbor_value - current_value
+        <span class="cm"># delta > 0 means neighbor is BETTER</span>
+        <span class="cm"># delta < 0 means neighbor is WORSE</span>
+
+        <span class="cm"># === THE CRITICAL DECISION ===</span>
+        <span class="kw">if</span> delta > <span class="nu">0</span>:
+            <span class="cm"># BETTER → Always accept. No brainer!</span>
+            current_x     = neighbor_x
+            current_value = neighbor_value
+
+        <span class="kw">else</span>:
+            <span class="cm"># WORSE → Maybe accept, depending on temperature.</span>
+            <span class="cm">#</span>
+            <span class="cm"># acceptance_probability = e^(delta / temperature)</span>
+            <span class="cm">#</span>
+            <span class="cm"># Example with delta = -0.3:</span>
+            <span class="cm">#   T = 1.0  → e^(-0.3/1.0) = 0.74  → 74% chance accept</span>
+            <span class="cm">#   T = 0.1  → e^(-0.3/0.1) = 0.05  → 5% chance accept</span>
+            <span class="cm">#   T = 0.01 → e^(-0.3/0.01) ≈ 0    → ~0% chance accept</span>
+            <span class="cm">#</span>
+            <span class="cm"># So: hot = adventurous, cold = picky</span>
+
+            acceptance_prob = math.exp(delta / temperature)
+
+            <span class="kw">if</span> random.random() < acceptance_prob:
+                <span class="cm"># Accepted a WORSE move! (This is the magic of SA)</span>
+                current_x     = neighbor_x
+                current_value = neighbor_value
+
+        <span class="cm"># Did we just find a new all-time best?</span>
+        <span class="kw">if</span> current_value > best_value:
+            best_x     = current_x
+            best_value = current_value
+
+        <span class="cm"># Cool down (this is the "annealing" part)</span>
+        temperature = temperature * cooling
+
+        history.append((current_x, current_value, temperature))
+
+    <span class="cm"># === DONE ===</span>
+    <span class="kw">return</span> best_x, best_value, history
+
+
+<span class="cm"># ----- RUN IT -----</span>
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    x, val, hist = simulated_annealing()
+    print(f<span class="st">"SA Result → x={x:.4f}, f(x)={val:.4f}"</span>)
+    print(f<span class="st">"Total iterations: {len(hist)}"</span>)</pre>
+  </div>
+
+  <h3>🎮 Interactive Visualization — Simulated Annealing in Action</h3>
+  <div class="viz-container">
+    <canvas id="saCanvas" width="700" height="340"></canvas>
+    <div class="viz-controls">
+      <button class="viz-btn" id="saRunBtn" onclick="saViz.start()">▶ Start</button>
+      <button class="viz-btn" id="saPauseBtn" onclick="saViz.pause()" disabled>⏸ Pause</button>
+      <button class="viz-btn" onclick="saViz.step()" id="saStepBtn">⏭ Step</button>
+      <button class="viz-btn" onclick="saViz.reset()">🔄 Reset</button>
+    </div>
+    <div class="speed-row">
+      <span style="font-size:12px;color:var(--text-dim);">Speed:</span>
+      <button class="speed-btn" onclick="saViz.setSpeed(500,this)">🐢 Slow</button>
+      <button class="speed-btn active" onclick="saViz.setSpeed(120,this)">🚶 Medium</button>
+      <button class="speed-btn" onclick="saViz.setSpeed(20,this)">🏃 Fast</button>
+    </div>
+    <div class="info-panel">
+      <div class="info-card"><div class="label">Step</div><div class="value" id="saStep">0</div></div>
+      <div class="info-card"><div class="label">Temperature</div><div class="value" id="saTemp" style="color:var(--accent2)">—</div></div>
+      <div class="info-card"><div class="label">Current f(x)</div><div class="value" id="saVal">—</div></div>
+      <div class="info-card"><div class="label">Best f(x)</div><div class="value" id="saBest" style="color:var(--accent4)">—</div></div>
+      <div class="info-card"><div class="label">Last Decision</div><div class="value" id="saDecision" style="font-size:12px">—</div></div>
+    </div>
+    <div class="legend">
+      <span style="color:var(--accent2);">● Hot (exploring)</span>
+      <span style="color:var(--accent);">● Warm</span>
+      <span style="color:var(--accent4);">● Cold (exploiting)</span>
+      <span style="color:#fff;">◆ Best ever found</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ 4. LOCAL BEAM SEARCH ════════════════════ -->
+<section id="lbs" class="reveal">
+  <div class="section-header clr-lb">
+    <div class="section-num">4</div>
+    <h2>Local Beam Search — The Search Party</h2>
+  </div>
+
+  <div class="callout callout-fun">
+    <div class="callout-title">🎭 The Analogy</div>
+    Hill climbing sends <strong>one hiker</strong>. Random restart sends hikers <em>one at a time</em>.
+    Local Beam Search says: <em>"Send k hikers at once and give them walkie-talkies!"</em> 📻
+    If one person finds a promising area, the <strong>whole team shifts toward it</strong>.
+  </div>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">⚠️ Common Misconception Alert!</div>
+    Local Beam Search is <strong>NOT</strong> running k independent hill climbers!
+    The key difference: at each step, ALL successors of ALL k states are generated, and the <strong>best k overall</strong>
+    are kept — regardless of which parent they came from. States <strong>share information</strong>.
+  </div>
+
+  <h3>Pseudocode</h3>
+  <div class="pseudo">
+    <strong>function</strong> LOCAL-BEAM-SEARCH(<em>problem</em>, <em>k</em>):<br>
+    &nbsp;&nbsp;Generate <em>k</em> random states<br>
+    &nbsp;&nbsp;<strong>loop</strong>:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> any state is a goal: <strong>return</strong> it<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Generate ALL successors of all <em>k</em> states<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Pool all successors together<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Select the <em>k best</em> from the pool<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Replace current states with these <em>k best</em>
+  </div>
+
+  <h3>🐍 Python Code — Fully Explained</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="lang">Python</span><span>local_beam_search.py</span></div>
+    <pre><span class="cm"># =====================================================</span>
+<span class="cm">#  LOCAL BEAM SEARCH — k searchers working as a TEAM</span>
+<span class="cm"># =====================================================</span>
+<span class="cm">#  WHAT IT DOES:</span>
+<span class="cm">#    Keep k states at all times. Each step, generate ALL</span>
+<span class="cm">#    successors of ALL k states, then keep only the top k.</span>
+<span class="cm">#</span>
+<span class="cm">#  KEY DIFFERENCE FROM PARALLEL HC:</span>
+<span class="cm">#    In parallel HC, each climber is independent.</span>
+<span class="cm">#    In beam search, they SHARE — if one state's area</span>
+<span class="cm">#    has great successors, the whole beam shifts there.</span>
+<span class="cm">#</span>
+<span class="cm">#  WEAKNESS:</span>
+<span class="cm">#    All k states can CONVERGE to the same region,</span>
+<span class="cm">#    losing diversity. (Fix: use stochastic beam search.)</span>
+<span class="cm"># =====================================================</span>
+
+<span class="kw">import</span> random, math
+
+<span class="kw">def</span> <span class="fn">objective</span>(x):
+    <span class="kw">return</span> math.sin(x) * math.cos(x/<span class="nu">2</span>) * math.sin(x/<span class="nu">3</span>)
+
+
+<span class="kw">def</span> <span class="fn">make_neighbors</span>(x, count=<span class="nu">4</span>, step=<span class="nu">0.3</span>, lo=<span class="nu">0</span>, hi=<span class="nu">20</span>):
+    <span class="st">"""Generate 'count' random neighbors of x within bounds."""</span>
+    neighbors = []
+    <span class="kw">for</span> _ <span class="kw">in</span> range(count):
+        nx = x + random.uniform(-step, step)
+        nx = max(lo, min(hi, nx))           <span class="cm"># Clamp to bounds</span>
+        neighbors.append(nx)
+    <span class="kw">return</span> neighbors
+
+
+<span class="kw">def</span> <span class="fn">local_beam_search</span>(
+    k               = <span class="nu">5</span>,     <span class="cm"># Number of states to keep (beam width)</span>
+    neighbors_each  = <span class="nu">4</span>,     <span class="cm"># How many neighbors each state generates</span>
+    max_iterations  = <span class="nu">200</span>,   <span class="cm"># How many rounds</span>
+    lower           = <span class="nu">0</span>,
+    upper           = <span class="nu">20</span>
+):
+    <span class="st">"""
+    Local Beam Search with k parallel states.
+    
+    ALGORITHM IN PLAIN ENGLISH:
+        1. Start with k random positions (the "beam")
+        2. Each position generates a few neighbors
+        3. Collect ALL neighbors from ALL positions into one big list
+        4. Sort by quality and keep only the TOP k
+        5. These top k become the new beam
+        6. Repeat
+    
+    EXAMPLE with k=3:
+        Round 1: States at x=[2.0, 8.5, 15.1]
+                 Each generates 4 neighbors → 12 new candidates
+                 Plus 3 originals → 15 total candidates
+                 Keep top 3: maybe [8.4, 8.6, 8.5] ← all near x=8!
+        → This is the CONVERGENCE problem.
+    """</span>
+
+    <span class="cm"># STEP 1: Create k random starting positions</span>
+    beam = [random.uniform(lower, upper) <span class="kw">for</span> _ <span class="kw">in</span> range(k)]
+    history = [list(beam)]  <span class="cm"># Save each generation for visualization</span>
+
+    <span class="kw">for</span> iteration <span class="kw">in</span> range(max_iterations):
+
+        <span class="cm"># STEP 2: Generate ALL neighbors of ALL states in the beam</span>
+        all_candidates = list(beam)  <span class="cm"># Start with current states (keep good ones)</span>
+
+        <span class="kw">for</span> state <span class="kw">in</span> beam:
+            new_neighbors = make_neighbors(state, count=neighbors_each)
+            all_candidates.extend(new_neighbors)
+        <span class="cm"># Now all_candidates has: k originals + k*neighbors_each new ones</span>
+
+        <span class="cm"># STEP 3: Sort ALL candidates by quality (best first)</span>
+        all_candidates.sort(key=objective, reverse=<span class="nu">True</span>)
+
+        <span class="cm"># STEP 4: Keep only the top k → this is the new beam</span>
+        beam = all_candidates[:k]
+        history.append(list(beam))
+
+    <span class="cm"># Return the single best state</span>
+    best = max(beam, key=objective)
+    <span class="kw">return</span> best, objective(best), history
+
+
+<span class="cm"># =====================================================</span>
+<span class="cm">#  STOCHASTIC BEAM SEARCH — fixes the diversity problem</span>
+<span class="cm"># =====================================================</span>
+<span class="cm">#  Instead of always picking the top k (deterministic),</span>
+<span class="cm">#  we pick k states PROBABILISTICALLY — better states</span>
+<span class="cm">#  are MORE LIKELY to be chosen, but weaker ones still</span>
+<span class="cm">#  have a chance. Like natural selection!</span>
+
+<span class="kw">def</span> <span class="fn">stochastic_beam_search</span>(k=<span class="nu">5</span>, neighbors_each=<span class="nu">4</span>,
+                           max_iterations=<span class="nu">200</span>, lower=<span class="nu">0</span>, upper=<span class="nu">20</span>,
+                           temperature=<span class="nu">0.5</span>):
+    <span class="st">"""
+    Like local beam search, but select survivors using
+    WEIGHTED RANDOM selection instead of strict top-k.
+    
+    Weights come from softmax: weight_i = e^(value_i / temperature)
+    Higher value → higher weight → more likely to survive.
+    But even low-value states have a small chance → DIVERSITY!
+    """</span>
+    beam = [random.uniform(lower, upper) <span class="kw">for</span> _ <span class="kw">in</span> range(k)]
+
+    <span class="kw">for</span> _ <span class="kw">in</span> range(max_iterations):
+        all_candidates = list(beam)
+        <span class="kw">for</span> s <span class="kw">in</span> beam:
+            all_candidates.extend(make_neighbors(s, count=neighbors_each))
+
+        <span class="cm"># Compute softmax weights</span>
+        values  = [objective(c) <span class="kw">for</span> c <span class="kw">in</span> all_candidates]
+        max_val = max(values)
+        weights = [math.exp((v - max_val) / temperature) <span class="kw">for</span> v <span class="kw">in</span> values]
+
+        <span class="cm"># Weighted random selection (higher fitness → more likely)</span>
+        beam = random.choices(all_candidates, weights=weights, k=k)
+
+    best = max(beam, key=objective)
+    <span class="kw">return</span> best, objective(best)
+
+
+<span class="cm"># ----- RUN IT -----</span>
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    x, val, hist = local_beam_search(k=<span class="nu">6</span>)
+    print(f<span class="st">"Beam (k=6)       → x={x:.4f}, f(x)={val:.4f}"</span>)
+
+    x2, val2 = stochastic_beam_search(k=<span class="nu">6</span>)
+    print(f<span class="st">"Stochastic Beam  → x={x2:.4f}, f(x)={val2:.4f}"</span>)</pre>
+  </div>
+
+  <h3>🎮 Interactive Visualization — Watch the Beam Swarm</h3>
+  <div class="viz-container">
+    <canvas id="beamCanvas" width="700" height="340"></canvas>
+    <div class="viz-controls">
+      <button class="viz-btn" id="beamRunBtn" onclick="beamViz.start()">▶ Start</button>
+      <button class="viz-btn" id="beamPauseBtn" onclick="beamViz.pause()" disabled>⏸ Pause</button>
+      <button class="viz-btn" onclick="beamViz.step()">⏭ Step</button>
+      <button class="viz-btn" onclick="beamViz.reset()">🔄 Reset</button>
+    </div>
+    <div class="speed-row">
+      <span style="font-size:12px;color:var(--text-dim);">Speed:</span>
+      <button class="speed-btn" onclick="beamViz.setSpeed(800,this)">🐢 Slow</button>
+      <button class="speed-btn active" onclick="beamViz.setSpeed(250,this)">🚶 Medium</button>
+      <button class="speed-btn" onclick="beamViz.setSpeed(60,this)">🏃 Fast</button>
+    </div>
+    <div class="info-panel">
+      <div class="info-card"><div class="label">Generation</div><div class="value" id="beamGen">0</div></div>
+      <div class="info-card"><div class="label">Beam Width (k)</div><div class="value" id="beamK" style="color:var(--accent3)">5</div></div>
+      <div class="info-card"><div class="label">Best f(x)</div><div class="value" id="beamBest" style="color:var(--accent4)">—</div></div>
+      <div class="info-card"><div class="label">Beam Spread</div><div class="value" id="beamSpread">—</div></div>
+    </div>
+    <div class="legend">
+      <span style="color:var(--accent3);">● Beam states (k active searchers)</span>
+      <span style="color:rgba(69,170,242,0.25);">● Previous generation (fading)</span>
+      <span style="color:#fff;">◆ Best found</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ 5. TABU SEARCH ════════════════════ -->
+<section id="ts" class="reveal">
+  <div class="section-header clr-ts">
+    <div class="section-num">5</div>
+    <h2>Tabu Search — The Elephant That Never Forgets</h2>
+  </div>
+
+  <div class="callout callout-fun">
+    <div class="callout-title">🎭 The Analogy</div>
+    You're exploring a maze. Normal hill climbing might walk you in circles — keep returning to the same
+    "good-looking" dead end. Tabu Search keeps a <strong>"Do Not Visit" list</strong> of recent places.
+    Even if a visited room looks attractive, <strong>you're forbidden from going back</strong> (for a while).
+    This forces you to explore new territory!
+  </div>
+
+  <h3>Key Components</h3>
+  <table class="comp-table">
+    <tr><th>Component</th><th>What It Does</th><th>Example</th></tr>
+    <tr><td><strong>Tabu List</strong></td><td>Short-term memory of recently visited states/moves</td><td>Last 7 positions visited</td></tr>
+    <tr><td><strong>Tabu Tenure</strong></td><td>How long a move stays forbidden</td><td>Banned for 10 iterations</td></tr>
+    <tr><td><strong>Aspiration Criteria</strong></td><td>Override: allow a tabu move IF it's the new best ever</td><td>"This tabu move is too good to ignore!"</td></tr>
+  </table>
+
+  <div class="callout callout-warning">
+    <div class="callout-title">⚠️ Critical: Tabu Search DOES Accept Worse Moves!</div>
+    Tabu search picks the <strong>best non-tabu neighbor</strong> even if it's <em>worse</em> than the current state.
+    This is essential — it prevents cycling and forces exploration. "You can't go back, so you MUST go forward, even downhill."
+  </div>
+
+  <h3>🐍 Python Code — Fully Explained</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="lang">Python</span><span>tabu_search.py</span></div>
+    <pre><span class="cm"># =====================================================</span>
+<span class="cm">#  TABU SEARCH — Uses MEMORY to avoid revisiting states</span>
+<span class="cm"># =====================================================</span>
+<span class="cm">#  WHAT IT DOES:</span>
+<span class="cm">#    Like hill climbing, but keeps a "banned list" of</span>
+<span class="cm">#    recently visited states. Forces the search forward</span>
+<span class="cm">#    into NEW territory, preventing cycling.</span>
+<span class="cm">#</span>
+<span class="cm">#  UNIQUE FEATURES:</span>
+<span class="cm">#    1. Tabu List    — "no-go zones" that expire after a while</span>
+<span class="cm">#    2. Aspiration   — override the ban if a move is AMAZING</span>
+<span class="cm">#    3. Forced moves — MUST move, even downhill, if all good</span>
+<span class="cm">#                      moves are tabu</span>
+<span class="cm">#</span>
+<span class="cm">#  BEST FOR: Combinatorial problems like TSP, scheduling</span>
+<span class="cm"># =====================================================</span>
+
+<span class="kw">import</span> random, math
+<span class="kw">from</span> collections <span class="kw">import</span> deque   <span class="cm"># A list that auto-removes old items</span>
+
+
+<span class="kw">def</span> <span class="fn">objective</span>(x):
+    <span class="kw">return</span> math.sin(x) * math.cos(x/<span class="nu">2</span>) * math.sin(x/<span class="nu">3</span>)
+
+
+<span class="kw">def</span> <span class="fn">tabu_search</span>(
+    lower       = <span class="nu">0</span>,
+    upper       = <span class="nu">20</span>,
+    tabu_tenure = <span class="nu">10</span>,      <span class="cm"># How many recent states to remember (ban duration)</span>
+    num_neighbors = <span class="nu">20</span>,    <span class="cm"># Candidates to evaluate each step</span>
+    max_iter    = <span class="nu">500</span>,     <span class="cm"># Maximum steps</span>
+    step_size   = <span class="nu">0.5</span>,     <span class="cm"># Neighbor generation range</span>
+    precision   = <span class="nu">1</span>        <span class="cm"># Rounding for tabu comparison (1 decimal place)</span>
+):
+    <span class="st">"""
+    Tabu Search to MAXIMIZE the objective function.
+    
+    ALGORITHM IN PLAIN ENGLISH:
+        1. Start at a random spot. Create an empty "banned" list.
+        2. Generate many neighbors.
+        3. Remove any neighbor that's in the banned list
+           UNLESS it would be the new best-ever (aspiration).
+        4. Move to the BEST non-banned neighbor.
+           (Even if it's WORSE than current! You MUST move.)
+        5. Add the new position to the banned list.
+        6. If the banned list is too long, un-ban the oldest entry.
+        7. Repeat.
+    
+    WHY ROUNDING?
+        We round positions to 1 decimal place for tabu comparison.
+        Without this, 5.001 and 5.002 would be "different" states,
+        making the tabu list useless. Rounding creates "zones".
+    """</span>
+
+    <span class="cm"># === SETUP ===</span>
+    current_x     = random.uniform(lower, upper)
+    current_value = objective(current_x)
+    best_x        = current_x
+    best_value    = current_value
+    history       = [(current_x, current_value)]
+
+    <span class="cm"># The tabu list: a deque with max length = tenure.</span>
+    <span class="cm"># When it's full and we add a new item,</span>
+    <span class="cm"># the OLDEST item is automatically removed. Perfect!</span>
+    tabu_list = deque(maxlen=tabu_tenure)
+    tabu_list.append(round(current_x, precision))
+
+    <span class="cm"># === MAIN LOOP ===</span>
+    <span class="kw">for</span> step <span class="kw">in</span> range(max_iter):
+
+        <span class="cm"># STEP 1: Generate candidate neighbors</span>
+        allowed_candidates = []  <span class="cm"># Non-tabu options</span>
+
+        <span class="kw">for</span> _ <span class="kw">in</span> range(num_neighbors):
+            nx = current_x + random.uniform(-step_size, step_size)
+            nx = max(lower, min(upper, nx))
+            nx_rounded = round(nx, precision)
+            nval = objective(nx)
+
+            <span class="cm"># Is this position in the banned list?</span>
+            is_banned = (nx_rounded <span class="kw">in</span> tabu_list)
+
+            <span class="cm"># ASPIRATION CRITERION:</span>
+            <span class="cm"># Even if it's banned, allow it if it's the NEW BEST EVER.</span>
+            <span class="cm"># "The rule is 'no revisits', but this is TOO GOOD to pass up!"</span>
+            <span class="kw">if</span> is_banned <span class="kw">and</span> nval > best_value:
+                is_banned = <span class="nu">False</span>   <span class="cm"># Override! Aspiration activated!</span>
+
+            <span class="kw">if not</span> is_banned:
+                allowed_candidates.append((nx, nval))
+
+        <span class="cm"># Edge case: all neighbors are tabu (very rare)</span>
+        <span class="kw">if not</span> allowed_candidates:
+            nx = current_x + random.uniform(-step_size*<span class="nu">2</span>, step_size*<span class="nu">2</span>)
+            nx = max(lower, min(upper, nx))
+            allowed_candidates = [(nx, objective(nx))]
+
+        <span class="cm"># STEP 2: Pick the BEST allowed neighbor</span>
+        <span class="cm"># NOTE: We take the best even if it's WORSE than current!</span>
+        <span class="cm"># This is what prevents cycling — we MUST move forward.</span>
+        allowed_candidates.sort(key=<span class="kw">lambda</span> c: c[<span class="nu">1</span>], reverse=<span class="nu">True</span>)
+        current_x, current_value = allowed_candidates[<span class="nu">0</span>]
+
+        <span class="cm"># STEP 3: Ban this new position</span>
+        tabu_list.append(round(current_x, precision))
+        <span class="cm"># (Oldest ban auto-expires because deque has maxlen)</span>
+
+        <span class="cm"># STEP 4: Update global best</span>
+        <span class="kw">if</span> current_value > best_value:
+            best_x, best_value = current_x, current_value
+
+        history.append((current_x, current_value))
+
+    <span class="kw">return</span> best_x, best_value, history
+
+
+<span class="cm"># ----- RUN IT -----</span>
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    x, val, hist = tabu_search()
+    print(f<span class="st">"Tabu Search → x={x:.4f}, f(x)={val:.4f}"</span>)
+    print(f<span class="st">"Iterations: {len(hist)}"</span>)</pre>
+  </div>
+
+  <h3>🎮 Interactive Visualization — Watch Tabu Search Explore</h3>
+  <div class="viz-container">
+    <canvas id="tabuCanvas" width="700" height="340"></canvas>
+    <div class="viz-controls">
+      <button class="viz-btn" id="tabuRunBtn" onclick="tabuViz.start()">▶ Start</button>
+      <button class="viz-btn" id="tabuPauseBtn" onclick="tabuViz.pause()" disabled>⏸ Pause</button>
+      <button class="viz-btn" onclick="tabuViz.step()">⏭ Step</button>
+      <button class="viz-btn" onclick="tabuViz.reset()">🔄 Reset</button>
+    </div>
+    <div class="speed-row">
+      <span style="font-size:12px;color:var(--text-dim);">Speed:</span>
+      <button class="speed-btn" onclick="tabuViz.setSpeed(600,this)">🐢 Slow</button>
+      <button class="speed-btn active" onclick="tabuViz.setSpeed(200,this)">🚶 Medium</button>
+      <button class="speed-btn" onclick="tabuViz.setSpeed(40,this)">🏃 Fast</button>
+    </div>
+    <div class="info-panel">
+      <div class="info-card"><div class="label">Step</div><div class="value" id="tabuStep">0</div></div>
+      <div class="info-card"><div class="label">Tabu List Size</div><div class="value" id="tabuSize" style="color:var(--accent2)">0</div></div>
+      <div class="info-card"><div class="label">Current f(x)</div><div class="value" id="tabuVal">—</div></div>
+      <div class="info-card"><div class="label">Best f(x)</div><div class="value" id="tabuBest" style="color:var(--accent4)">—</div></div>
+      <div class="info-card"><div class="label">Last Decision</div><div class="value" id="tabuDecision" style="font-size:12px">—</div></div>
+    </div>
+    <div class="legend">
+      <span style="color:var(--accent4);">● Current position</span>
+      <span style="color:rgba(252,92,101,0.5);">█ Tabu (banned) zones</span>
+      <span style="color:#fff;">◆ Best ever found</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ 6. COMPARISON ════════════════════ -->
+<section id="compare" class="reveal">
+  <div class="section-header clr-hc">
+    <div class="section-num">6</div>
+    <h2>Grand Comparison</h2>
+  </div>
+  <table class="comp-table">
+    <tr>
+      <th>Feature</th>
+      <th style="color:var(--accent)">Hill Climbing</th>
+      <th style="color:var(--accent2)">Sim. Annealing</th>
+      <th style="color:var(--accent3)">Local Beam</th>
+      <th style="color:var(--accent4)">Tabu Search</th>
+    </tr>
+    <tr><td><strong>Accepts worse moves?</strong></td><td>❌ Never</td><td>✅ Probabilistically</td><td>❌ Greedy top-k</td><td>✅ Forced by tabu</td></tr>
+    <tr><td><strong>Memory</strong></td><td>O(1)</td><td>O(1)</td><td>O(k)</td><td>O(tenure)</td></tr>
+    <tr><td><strong>Escapes local optima?</strong></td><td>❌ (unless restart)</td><td>✅ Via temperature</td><td>Somewhat</td><td>✅ Via forbidden list</td></tr>
+    <tr><td><strong>Parallelism</strong></td><td>1 state</td><td>1 state</td><td>k states</td><td>1 state</td></tr>
+    <tr><td><strong>Key parameter</strong></td><td>Step size</td><td>Cooling schedule</td><td>Beam width k</td><td>Tabu tenure</td></tr>
+    <tr><td><strong>Best for</strong></td><td>Smooth, quick</td><td>Complex landscapes</td><td>Parallel eval</td><td>Combinatorial (TSP)</td></tr>
+    <tr><td><strong>Spirit animal</strong></td><td>🐐 Mountain goat</td><td>🦊 Curious fox</td><td>🐺 Wolf pack</td><td>🐘 Elephant</td></tr>
+  </table>
+
+  <div class="callout callout-analogy">
+    <div class="callout-title">🍕 The Pizza Summary</div>
+    <strong>Hill Climbing:</strong> Walk to the nearest pizza place. It's okay. You stop.<br>
+    <strong>Simulated Annealing:</strong> Early on, randomly try places across town. Later, settle near the best one found.<br>
+    <strong>Local Beam Search:</strong> Send 5 friends to different pizza places. Every round, everyone goes toward the best reports.<br>
+    <strong>Tabu Search:</strong> Try pizza places but keep a list of the last 10 visited. Can't revisit! Forces you to discover new joints.
+  </div>
+</section>
+
+<!-- ════════════════════ 7. PLAYGROUND ════════════════════ -->
+<section id="playground" class="reveal">
+  <div class="section-header clr-sa">
+    <div class="section-num">7</div>
+    <h2>🏟️ Algorithm Race — All Four Head to Head!</h2>
+  </div>
+  <p>Click "Race!" to run all four algorithms simultaneously and see who finds the best peak!</p>
+  <div class="viz-container">
+    <canvas id="raceCanvas" width="700" height="360"></canvas>
+    <div class="viz-controls">
+      <button class="viz-btn" onclick="runRace()" style="background:var(--accent);color:var(--bg);font-weight:800;animation:pulse 2s infinite;">🏁 RACE!</button>
+      <button class="viz-btn" onclick="resetRace()">🔄 Reset</button>
+    </div>
+    <div id="raceResults" style="margin-top:12px;font-family:'Source Code Pro',monospace;font-size:14px;text-align:left;max-width:500px;margin-left:auto;margin-right:auto;"></div>
+  </div>
+</section>
+
+<!-- ════════════════════ 8. QUIZ ════════════════════ -->
+<section id="quiz" class="reveal">
+  <div class="section-header clr-lb">
+    <div class="section-num">8</div>
+    <h2>⚡ Quick-Fire Quiz</h2>
+  </div>
+  <div class="quiz-box">
+    <h4>Q1: Hill Climbing gets stuck because...</h4>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">It runs out of memory</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'correct')">It can't accept worse moves, so it stops at local optima</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">It's too slow to evaluate neighbors</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">It requires a goal state</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box">
+    <h4>Q2: In Simulated Annealing, what happens as temperature decreases?</h4>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">The algorithm explores more aggressively</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'correct')">The probability of accepting worse moves decreases</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">The step size increases</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">The algorithm resets</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box">
+    <h4>Q3: How does Local Beam Search differ from k parallel hill climbers?</h4>
+    <button class="quiz-option" onclick="checkQuiz(this,'correct')">The k states share information — all successors are pooled and the best k selected</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">It uses less memory</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">It guarantees finding the global optimum</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">It runs faster</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box">
+    <h4>Q4: The "aspiration criterion" in Tabu Search means...</h4>
+    <button class="quiz-option" onclick="checkQuiz(this,'correct')">A tabu move is allowed if it produces a new best-ever solution</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">Adding more moves to the tabu list</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">A stopping condition for the algorithm</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">Sorting the tabu list</button>
+    <div class="quiz-feedback"></div>
+  </div>
+  <div class="quiz-box">
+    <h4>Q5: Which algorithm is theoretically guaranteed to find the global optimum?</h4>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">Hill Climbing</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'correct')">Simulated Annealing (with logarithmic cooling)</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">Local Beam Search</button>
+    <button class="quiz-option" onclick="checkQuiz(this,'wrong')">Tabu Search</button>
+    <div class="quiz-feedback"></div>
+  </div>
+</section>
+
+<!-- ════════════════════ 9. LAB TASKS ════════════════════ -->
+<section id="tasks" class="reveal">
+  <div class="section-header clr-ts">
+    <div class="section-num">9</div>
+    <h2>🧪 Lab Tasks</h2>
+  </div>
+  <p>Complete the following tasks. Submit code, output screenshots, and a brief report discussing your observations.</p>
+  <div class="task-card">
+    <div class="task-num">TASK 01 — N-QUEENS WITH HILL CLIMBING</div>
+    <h3>Solve the 8-Queens Problem</h3>
+    <p>Place 8 queens on an 8×8 chessboard so no two queens attack each other. Use <strong>number of attacking pairs</strong> as cost (minimize to 0).</p>
+    <p><strong>Requirements:</strong> (a) Implement steepest-ascent HC. Report success rate over 100 random starts. (b) Implement random-restart HC. Average restarts needed? (c) Implement first-choice HC. Compare speed and success rate. (d) Bar chart comparing all three variants.</p>
+  </div>
+  <div class="task-card">
+    <div class="task-num">TASK 02 — TSP WITH SIMULATED ANNEALING</div>
+    <h3>Optimize a 20-City Tour</h3>
+    <p>Given 20 cities with random coordinates, find the shortest tour. Use <strong>2-opt swap</strong> as the neighbor operation.</p>
+    <p><strong>Requirements:</strong> (a) Implement SA with 2-opt. (b) Compare three cooling schedules (linear, geometric, logarithmic). Plot tour distance vs iteration. (c) Visualize initial and final tours. (d) Discuss: best temperature and cooling rate?</p>
+  </div>
+  <div class="task-card">
+    <div class="task-num">TASK 03 — ACKLEY FUNCTION WITH BEAM SEARCH</div>
+    <h3>Minimize the 2D Ackley Function</h3>
+    <p>Use Local Beam Search to find the global minimum of the Ackley function in 2D (x, y ∈ [−5, 5]).</p>
+    <p><strong>Requirements:</strong> (a) Test k = 3, 5, 10, 20. (b) Implement stochastic beam search. Compare diversity (standard deviation of beam) over iterations. (c) 2D heatmap with beam positions at three snapshots. (d) At what k does increasing further stop helping? Why?</p>
+  </div>
+  <div class="task-card">
+    <div class="task-num">TASK 04 — JOB SCHEDULING WITH TABU SEARCH</div>
+    <h3>Minimize Makespan in a Job Shop</h3>
+    <p>5 jobs, 3 operations each, 3 machines. Minimize total completion time (makespan).</p>
+    <p><strong>Requirements:</strong> (a) Implement Tabu Search with adjacent-operation swaps. (b) Compare tabu tenure = 3, 7, 15. (c) Implement aspiration criterion and show a case where it triggered. (d) Gantt chart of best schedule. (e) Compare with random search baseline.</p>
+  </div>
+</section>
+
+<!-- ═══ CHEATSHEET ═══ -->
+<section class="reveal">
+  <div class="section-header clr-sa">
+    <div class="section-num">🥚</div>
+    <h2>Bonus: Exam Day Cheat Sheet</h2>
+  </div>
+  <div class="callout callout-tip">
+    <div class="callout-title">🧠 "Which algorithm should I use?"</div>
+    <strong>Smooth landscape, need speed?</strong> → Hill Climbing (+ random restarts)<br>
+    <strong>Complex landscape, many local optima?</strong> → Simulated Annealing<br>
+    <strong>Can afford parallel evaluations?</strong> → Local Beam Search<br>
+    <strong>Combinatorial, cycling is an issue?</strong> → Tabu Search<br>
+    <strong>No idea?</strong> → "Simulated Annealing" is usually a safe answer. 😉
+  </div>
+</section>
+
+<footer>
+  <p style="font-family:'Playfair Display',serif;font-size:18px;color:var(--accent);margin-bottom:6px;">Department of Computer Science</p>
+  <p>FAST National University of Computer and Emerging Sciences</p>
+  <p style="margin-top:12px;">Lab Manual prepared by <strong style="color:var(--accent);">Hamza Raziq Khan</strong></p>
+  <p style="margin-top:12px;font-size:12px;color:var(--text-dim);">Remember: Even algorithms get stuck sometimes. The trick is knowing when to restart. 🔄</p>
+</footer>
+
+</div><!-- /container -->
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  JAVASCRIPT — Complete rewrite with proper step-by-step      -->
+<!--  animation engine, pause/resume, speed control, accuracy     -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<script>
+// ═══════════════════════════════════
+//  SHARED UTILITIES
+// ═══════════════════════════════════
+const LO = 0, HI = 20;
+function objFn(x) { return Math.sin(x) * Math.cos(x / 2) * Math.sin(x / 3); }
+
+function xToPx(x, w) { return ((x - LO) / (HI - LO)) * w; }
+function valToPy(v, h, ys, yo) { return h - (v * ys + yo); }
+
+function drawDot(ctx, px, py, r, color, glow) {
+  if (glow) {
+    ctx.shadowColor = color; ctx.shadowBlur = glow;
+  }
+  ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2);
+  ctx.fillStyle = color; ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+function drawLabel(ctx, text, px, py, color, align) {
+  ctx.fillStyle = color; ctx.font = 'bold 12px Nunito'; ctx.textAlign = align || 'left';
+  ctx.fillText(text, px, py); ctx.textAlign = 'left';
+}
+
+function drawLandscapeBase(canvasId, ys, yo) {
+  const c = document.getElementById(canvasId);
+  const ctx = c.getContext('2d');
+  const w = c.width, h = c.height;
+  ctx.clearRect(0, 0, w, h);
+
+  // subtle grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.035)'; ctx.lineWidth = 1;
+  for (let i = 0; i < w; i += 50) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke(); }
+  for (let i = 0; i < h; i += 50) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke(); }
+
+  // filled area under curve
+  ctx.beginPath();
+  for (let px = 0; px < w; px++) {
+    const x = LO + (px / w) * (HI - LO), sy = valToPy(objFn(x), h, ys, yo);
+    px === 0 ? ctx.moveTo(px, sy) : ctx.lineTo(px, sy);
+  }
+  ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, 'rgba(247,183,49,0.12)'); grad.addColorStop(1, 'rgba(247,183,49,0)');
+  ctx.fillStyle = grad; ctx.fill();
+
+  // curve line
+  ctx.beginPath();
+  for (let px = 0; px < w; px++) {
+    const x = LO + (px / w) * (HI - LO), sy = valToPy(objFn(x), h, ys, yo);
+    px === 0 ? ctx.moveTo(px, sy) : ctx.lineTo(px, sy);
+  }
+  ctx.strokeStyle = 'rgba(247,183,49,0.5)'; ctx.lineWidth = 2; ctx.stroke();
+
+  // axis labels
+  ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.font = '11px Source Code Pro';
+  for (let v = 0; v <= 20; v += 5) {
+    ctx.fillText(v, xToPx(v, w) - 4, h - 4);
+  }
+  return { ctx, w, h };
+}
+
+// ═══════════════════════════════════
+//  ANIMATION ENGINE CLASS
+//  Provides: start, pause, step, reset, setSpeed
+// ═══════════════════════════════════
+class AlgoViz {
+  constructor(cfg) {
+    this.cfg = cfg;
+    this.timer = null;
+    this.running = false;
+    this.paused = false;
+    this.delay = cfg.defaultDelay || 200;
+    this.state = null;
+    this.init();
+  }
+  init() {
+    this.running = false; this.paused = false;
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = null;
+    this.state = this.cfg.initState();
+    this.cfg.draw(this.state);
+    this.updateButtons(false);
+    if (this.cfg.onInit) this.cfg.onInit(this.state);
+  }
+  reset() { this.init(); }
+  start() {
+    if (this.running && !this.paused) return;
+    if (this.paused) { this.paused = false; this.updateButtons(true); this.tick(); return; }
+    this.init();
+    this.running = true; this.paused = false;
+    this.updateButtons(true);
+    this.tick();
+  }
+  pause() {
+    if (!this.running) return;
+    this.paused = true;
+    if (this.timer) clearTimeout(this.timer);
+    this.updateButtons(true);
+    const pb = document.getElementById(this.cfg.pauseBtn);
+    if (pb) { pb.textContent = '▶ Resume'; }
+  }
+  step() {
+    if (!this.state || this.state.done) { this.init(); }
+    if (!this.running) { this.running = true; this.paused = true; }
+    this.doStep();
+  }
+  tick() {
+    if (!this.running || this.paused) return;
+    this.doStep();
+    if (!this.state.done) {
+      this.timer = setTimeout(() => this.tick(), this.delay);
+    }
+  }
+  doStep() {
+    if (this.state.done) { this.finish(); return; }
+    this.cfg.stepFn(this.state);
+    this.cfg.draw(this.state);
+    if (this.cfg.onStep) this.cfg.onStep(this.state);
+    if (this.state.done) this.finish();
+  }
+  finish() {
+    this.running = false; this.paused = false;
+    if (this.timer) clearTimeout(this.timer);
+    this.updateButtons(false);
+    if (this.cfg.onDone) this.cfg.onDone(this.state);
+  }
+  setSpeed(ms, btn) {
+    this.delay = ms;
+    const row = btn.parentElement;
+    row.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  updateButtons(isRunning) {
+    const rb = document.getElementById(this.cfg.runBtn);
+    const pb = document.getElementById(this.cfg.pauseBtn);
+    if (rb) rb.disabled = isRunning && !this.paused;
+    if (pb) { pb.disabled = !isRunning || this.state.done; pb.textContent = this.paused ? '▶ Resume' : '⏸ Pause'; }
+  }
+}
+
+// ═══════════════════════════════════
+//  LANDSCAPE INTRO VIZ (static, no animation)
+// ═══════════════════════════════════
+function drawLandscape(type, btn) {
+  const c = document.getElementById('landscapeCanvas');
+  const ctx = c.getContext('2d'); const w = c.width, h = c.height;
+  ctx.clearRect(0, 0, w, h);
+  c.parentElement.querySelectorAll('.viz-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  let fn;
+  if (type === 'peaks') fn = x => Math.sin(x) * Math.cos(x/2) * Math.sin(x/3);
+  else if (type === 'flat') fn = x => { const v = Math.sin(x*0.5); return Math.abs(v) < 0.15 ? 0.3 : v; };
+  else fn = x => 0.5 * Math.sin(x * 0.3) + 0.3 * Math.sin(x * 1.7) * Math.cos(x);
+
+  // fill
+  ctx.beginPath();
+  for (let px = 0; px < w; px++) { const x = LO + (px/w)*(HI-LO), sy = h - (fn(x)*100+150); px===0?ctx.moveTo(px,sy):ctx.lineTo(px,sy); }
+  ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
+  const g = ctx.createLinearGradient(0,0,0,h); g.addColorStop(0,'rgba(69,170,242,0.2)'); g.addColorStop(1,'rgba(69,170,242,0)');
+  ctx.fillStyle = g; ctx.fill();
+  // line
+  ctx.beginPath();
+  for (let px = 0; px < w; px++) { const x = LO + (px/w)*(HI-LO), sy = h - (fn(x)*100+150); px===0?ctx.moveTo(px,sy):ctx.lineTo(px,sy); }
+  ctx.strokeStyle = '#45aaf2'; ctx.lineWidth = 2.5; ctx.stroke();
+  // labels
+  ctx.fillStyle = '#45aaf2'; ctx.font = 'bold 14px Nunito';
+  if (type === 'peaks') {
+    // find global max
+    let gx=0,gv=-99; for(let x=0;x<=20;x+=0.05){const v=fn(x);if(v>gv){gv=v;gx=x;}}
+    const gpx=xToPx(gx,w), gpy=h-(gv*100+150);
+    drawDot(ctx,gpx,gpy,6,'#45aaf2',10);
+    ctx.fillText('Global Max', gpx+10, gpy-4);
+    // find a local max
+    let lx=0,lv=-99; for(let x=1;x<6;x+=0.05){const v=fn(x);if(v>lv){lv=v;lx=x;}}
+    const lpx=xToPx(lx,w), lpy=h-(lv*100+150);
+    drawDot(ctx,lpx,lpy,5,'#fc5c65',8);
+    ctx.fillStyle='#fc5c65'; ctx.fillText('Local Max (trap!)', lpx+10, lpy-4);
+  } else if (type === 'flat') {
+    ctx.fillText('← Plateau (no gradient!)', 200, 100);
+  } else {
+    ctx.fillText('← Ridge (tricky terrain)', 250, 70);
+  }
+}
+drawLandscape('peaks', null);
+
+// ═══════════════════════════════════
+//  HILL CLIMBING VISUALIZATION
+// ═══════════════════════════════════
+const YS = 120, YO = 170; // yScale, yOffset shared
+
+const hcViz = new AlgoViz({
+  runBtn: 'hcRunBtn', pauseBtn: 'hcPauseBtn', defaultDelay: 200,
+  initState() {
+    const x = Math.random() * (HI - LO) + LO;
+    return { x, val: objFn(x), step: 0, done: false, trail: [{x, val: objFn(x)}], stuck: false, maxSteps: 200, triedNeighbor: null, accepted: null };
+  },
+  stepFn(s) {
+    // Generate multiple neighbors, pick the best (steepest ascent)
+    let bestNx = s.x, bestNv = s.val;
+    let tried = null;
+    for (let i = 0; i < 8; i++) {
+      const nx = Math.max(LO, Math.min(HI, s.x + (Math.random()*2-1) * 0.2));
+      const nv = objFn(nx);
+      if (nv > bestNv) { bestNx = nx; bestNv = nv; tried = {x: nx, v: nv}; }
+    }
+    s.triedNeighbor = tried;
+    if (bestNv > s.val) {
+      s.x = bestNx; s.val = bestNv; s.accepted = true;
+      s.trail.push({x: s.x, val: s.val});
+    } else {
+      s.accepted = false; s.stuck = true; s.done = true;
+    }
+    s.step++;
+    if (s.step >= s.maxSteps) s.done = true;
+  },
+  draw(s) {
+    const {ctx, w, h} = drawLandscapeBase('hcCanvas', YS, YO);
+    // trail
+    for (let i = 0; i < s.trail.length; i++) {
+      const t = s.trail[i], alpha = 0.15 + 0.85 * (i / Math.max(s.trail.length, 1));
+      drawDot(ctx, xToPx(t.x,w), valToPy(t.val,h,YS,YO), 4, `rgba(247,183,49,${alpha})`);
+    }
+    // tried neighbor (if rejected, show in red)
+    if (s.triedNeighbor && !s.accepted) {
+      const tn = s.triedNeighbor;
+      drawDot(ctx, xToPx(tn.x,w), valToPy(tn.v,h,YS,YO), 5, 'rgba(252,92,101,0.6)');
+      drawLabel(ctx, '✗ worse', xToPx(tn.x,w)+8, valToPy(tn.v,h,YS,YO)-4, '#fc5c65');
+    }
+    // current position (big glowing dot)
+    drawDot(ctx, xToPx(s.x,w), valToPy(s.val,h,YS,YO), 8, '#f7b731', 15);
+    // stuck label
+    if (s.stuck) {
+      drawLabel(ctx, `STUCK! Local optimum`, xToPx(s.x,w)+14, valToPy(s.val,h,YS,YO)-12, '#fc5c65');
+    }
+    // update info
+    document.getElementById('hcStep').textContent = s.step;
+    document.getElementById('hcX').textContent = s.x.toFixed(3);
+    document.getElementById('hcVal').textContent = s.val.toFixed(4);
+    document.getElementById('hcState').textContent = s.stuck ? '🛑 STUCK' : s.done ? '✅ Done' : s.accepted === null ? 'Ready' : s.accepted ? '⬆ Moved up' : '— No better neighbor';
+    document.getElementById('hcState').style.color = s.stuck ? '#fc5c65' : s.accepted ? '#26de81' : '#f7b731';
+  },
+  onInit(s) {
+    document.getElementById('hcStep').textContent = '0';
+    document.getElementById('hcX').textContent = s.x.toFixed(3);
+    document.getElementById('hcVal').textContent = s.val.toFixed(4);
+    document.getElementById('hcState').textContent = 'Ready'; document.getElementById('hcState').style.color = '#8888aa';
+  }
+});
+
+// ═══════════════════════════════════
+//  SIMULATED ANNEALING VISUALIZATION
+// ═══════════════════════════════════
+const saViz = new AlgoViz({
+  runBtn: 'saRunBtn', pauseBtn: 'saPauseBtn', defaultDelay: 120,
+  initState() {
+    const x = Math.random() * (HI-LO) + LO;
+    return { x, val: objFn(x), bestX: x, bestVal: objFn(x), T: 1.5, step: 0, done: false,
+      trail: [], decision: '—', maxSteps: 600, cooling: 0.992 };
+  },
+  stepFn(s) {
+    if (s.T < 0.001) { s.done = true; return; }
+    const nx = Math.max(LO, Math.min(HI, s.x + (Math.random()*2-1)*0.5));
+    const nv = objFn(nx);
+    const delta = nv - s.val;
+
+    let moved = false;
+    if (delta > 0) {
+      s.x = nx; s.val = nv; moved = true;
+      s.decision = `⬆ Better by ${delta.toFixed(3)}`;
+    } else {
+      const prob = Math.exp(delta / s.T);
+      if (Math.random() < prob) {
+        s.x = nx; s.val = nv; moved = true;
+        s.decision = `⬇ Accepted worse (p=${(prob*100).toFixed(0)}%)`;
+      } else {
+        s.decision = `✗ Rejected worse (p=${(prob*100).toFixed(0)}%)`;
+      }
+    }
+    if (s.val > s.bestVal) { s.bestX = s.x; s.bestVal = s.val; }
+    s.trail.push({x: s.x, val: s.val, T: s.T, moved});
+    s.T *= s.cooling;
+    s.step++;
+    if (s.step >= s.maxSteps) s.done = true;
+  },
+  draw(s) {
+    const {ctx, w, h} = drawLandscapeBase('saCanvas', YS, YO);
+    // trail colored by temperature
+    for (let i = 0; i < s.trail.length; i++) {
+      const t = s.trail[i];
+      const c = t.T > 0.5 ? '#fc5c65' : t.T > 0.1 ? '#f7b731' : '#26de81';
+      drawDot(ctx, xToPx(t.x,w), valToPy(t.val,h,YS,YO), 3, c + '55');
+    }
+    // best ever
+    drawDot(ctx, xToPx(s.bestX,w), valToPy(s.bestVal,h,YS,YO), 7, '#fff', 12);
+    drawLabel(ctx, `Best: ${s.bestVal.toFixed(4)}`, xToPx(s.bestX,w)+12, valToPy(s.bestVal,h,YS,YO)-8, '#fff');
+    // current
+    const curColor = s.T > 0.5 ? '#fc5c65' : s.T > 0.1 ? '#f7b731' : '#26de81';
+    drawDot(ctx, xToPx(s.x,w), valToPy(s.val,h,YS,YO), 8, curColor, 15);
+
+    // temperature bar on the right
+    const barX = w - 30, barH = h - 40, barW = 14;
+    const tFrac = Math.min(s.T / 1.5, 1);
+    const gBar = ctx.createLinearGradient(0, 20, 0, 20+barH);
+    gBar.addColorStop(0, '#fc5c65'); gBar.addColorStop(0.5, '#f7b731'); gBar.addColorStop(1, '#26de81');
+    ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(barX, 20, barW, barH);
+    ctx.fillStyle = gBar; ctx.fillRect(barX, 20 + barH*(1-tFrac), barW, barH*tFrac);
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.strokeRect(barX, 20, barW, barH);
+    ctx.fillStyle = '#fff'; ctx.font = '10px Source Code Pro'; ctx.textAlign = 'center';
+    ctx.fillText('T', barX+7, 16); ctx.textAlign = 'left';
+
+    // info
+    document.getElementById('saStep').textContent = s.step;
+    document.getElementById('saTemp').textContent = s.T.toFixed(4);
+    document.getElementById('saTemp').style.color = s.T > 0.5 ? '#fc5c65' : s.T > 0.1 ? '#f7b731' : '#26de81';
+    document.getElementById('saVal').textContent = s.val.toFixed(4);
+    document.getElementById('saBest').textContent = s.bestVal.toFixed(4);
+    document.getElementById('saDecision').textContent = s.decision;
+    document.getElementById('saDecision').style.color = s.decision.startsWith('⬆') ? '#26de81' : s.decision.startsWith('⬇') ? '#f7b731' : '#fc5c65';
+  },
+  onInit(s) {
+    ['saStep','saTemp','saVal','saBest'].forEach(id => document.getElementById(id).textContent = '—');
+    document.getElementById('saDecision').textContent = '—';
+  }
+});
+
+// ═══════════════════════════════════
+//  LOCAL BEAM SEARCH VISUALIZATION
+// ═══════════════════════════════════
+const beamViz = new AlgoViz({
+  runBtn: 'beamRunBtn', pauseBtn: 'beamPauseBtn', defaultDelay: 250,
+  initState() {
+    const k = 5;
+    const beam = Array.from({length: k}, () => Math.random()*(HI-LO)+LO);
+    return { beam, prevBeam: [], gen: 0, done: false, maxGen: 80, k };
+  },
+  stepFn(s) {
+    s.prevBeam = [...s.beam];
+    // generate all successors
+    let all = [...s.beam];
+    s.beam.forEach(x => {
+      for (let i = 0; i < 4; i++) all.push(Math.max(LO, Math.min(HI, x + (Math.random()*2-1)*0.4)));
+    });
+    all.sort((a,b) => objFn(b) - objFn(a));
+    s.beam = all.slice(0, s.k);
+    s.gen++;
+    if (s.gen >= s.maxGen) s.done = true;
+  },
+  draw(s) {
+    const {ctx, w, h} = drawLandscapeBase('beamCanvas', YS, YO);
+    // previous gen (faded)
+    s.prevBeam.forEach(x => {
+      drawDot(ctx, xToPx(x,w), valToPy(objFn(x),h,YS,YO), 5, 'rgba(69,170,242,0.18)');
+    });
+    // draw lines from prev to current (migration)
+    if (s.prevBeam.length) {
+      ctx.strokeStyle = 'rgba(69,170,242,0.1)'; ctx.lineWidth = 1;
+      s.beam.forEach(x => {
+        const closest = s.prevBeam.reduce((a,b) => Math.abs(a-x) < Math.abs(b-x) ? a : b);
+        ctx.beginPath();
+        ctx.moveTo(xToPx(closest,w), valToPy(objFn(closest),h,YS,YO));
+        ctx.lineTo(xToPx(x,w), valToPy(objFn(x),h,YS,YO));
+        ctx.stroke();
+      });
+    }
+    // current beam
+    s.beam.forEach((x, i) => {
+      drawDot(ctx, xToPx(x,w), valToPy(objFn(x),h,YS,YO), 7, '#45aaf2', 10);
+    });
+    // best
+    const best = s.beam.reduce((a,b) => objFn(a) > objFn(b) ? a : b);
+    const bv = objFn(best);
+    drawDot(ctx, xToPx(best,w), valToPy(bv,h,YS,YO), 9, '#fff', 14);
+
+    // info
+    const spread = Math.max(...s.beam) - Math.min(...s.beam);
+    document.getElementById('beamGen').textContent = s.gen;
+    document.getElementById('beamK').textContent = s.k;
+    document.getElementById('beamBest').textContent = bv.toFixed(4);
+    document.getElementById('beamSpread').textContent = spread.toFixed(2);
+    document.getElementById('beamSpread').style.color = spread < 1 ? '#fc5c65' : spread < 5 ? '#f7b731' : '#26de81';
+  },
+  onInit(s) {
+    document.getElementById('beamGen').textContent = '0';
+    document.getElementById('beamK').textContent = s.k;
+    document.getElementById('beamBest').textContent = '—';
+    document.getElementById('beamSpread').textContent = '—';
+  }
+});
+
+// ═══════════════════════════════════
+//  TABU SEARCH VISUALIZATION
+// ═══════════════════════════════════
+const tabuViz = new AlgoViz({
+  runBtn: 'tabuRunBtn', pauseBtn: 'tabuPauseBtn', defaultDelay: 200,
+  initState() {
+    const x = Math.random()*(HI-LO)+LO;
+    return { x, val: objFn(x), bestX: x, bestVal: objFn(x), step: 0, done: false,
+      tabuList: [Math.round(x*10)/10], tenure: 12, trail: [{x, val: objFn(x)}],
+      decision: '—', maxSteps: 200, aspiration: false };
+  },
+  stepFn(s) {
+    let candidates = [];
+    for (let i = 0; i < 20; i++) {
+      const nx = Math.max(LO, Math.min(HI, s.x + (Math.random()*2-1)*0.5));
+      const nr = Math.round(nx*10)/10;
+      const nv = objFn(nx);
+      let banned = s.tabuList.includes(nr);
+      let asp = false;
+      if (banned && nv > s.bestVal) { banned = false; asp = true; }
+      if (!banned) candidates.push({x: nx, val: nv, asp});
+    }
+    if (!candidates.length) {
+      const nx = Math.max(LO, Math.min(HI, s.x + (Math.random()*2-1)*1));
+      candidates.push({x: nx, val: objFn(nx), asp: false});
+    }
+    candidates.sort((a,b) => b.val - a.val);
+    const pick = candidates[0];
+    const wentDown = pick.val < s.val;
+    s.aspiration = pick.asp;
+    s.x = pick.x; s.val = pick.val;
+
+    s.tabuList.push(Math.round(s.x*10)/10);
+    if (s.tabuList.length > s.tenure) s.tabuList.shift();
+
+    if (s.val > s.bestVal) { s.bestX = s.x; s.bestVal = s.val; }
+    s.trail.push({x: s.x, val: s.val});
+    s.step++;
+    s.decision = pick.asp ? '⭐ Aspiration override!' : wentDown ? '⬇ Forced downhill' : '⬆ Moved to better';
+    if (s.step >= s.maxSteps) s.done = true;
+  },
+  draw(s) {
+    const {ctx, w, h} = drawLandscapeBase('tabuCanvas', YS, YO);
+    // tabu zones (red shaded bands)
+    s.tabuList.forEach(t => {
+      const px = xToPx(t, w);
+      ctx.fillStyle = 'rgba(252,92,101,0.12)';
+      ctx.fillRect(px - 7, 0, 14, h);
+    });
+    // redraw curve on top of zones
+    ctx.beginPath();
+    for (let px = 0; px < w; px++) {
+      const x = LO + (px/w)*(HI-LO), sy = valToPy(objFn(x), h, YS, YO);
+      px === 0 ? ctx.moveTo(px, sy) : ctx.lineTo(px, sy);
+    }
+    ctx.strokeStyle = 'rgba(247,183,49,0.5)'; ctx.lineWidth = 2; ctx.stroke();
+
+    // trail
+    for (let i = 0; i < s.trail.length; i++) {
+      const t = s.trail[i], alpha = 0.1 + 0.9 * (i / Math.max(s.trail.length, 1));
+      drawDot(ctx, xToPx(t.x,w), valToPy(t.val,h,YS,YO), 3, `rgba(38,222,129,${alpha})`);
+    }
+    // trail line
+    if (s.trail.length > 1) {
+      ctx.beginPath(); ctx.strokeStyle = 'rgba(38,222,129,0.15)'; ctx.lineWidth = 1;
+      s.trail.forEach((t,i) => {
+        const px = xToPx(t.x,w), py = valToPy(t.val,h,YS,YO);
+        i === 0 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
+      });
+      ctx.stroke();
+    }
+    // best
+    drawDot(ctx, xToPx(s.bestX,w), valToPy(s.bestVal,h,YS,YO), 7, '#fff', 12);
+    // current
+    drawDot(ctx, xToPx(s.x,w), valToPy(s.val,h,YS,YO), 8, '#26de81', 15);
+
+    // info
+    document.getElementById('tabuStep').textContent = s.step;
+    document.getElementById('tabuSize').textContent = `${s.tabuList.length}/${s.tenure}`;
+    document.getElementById('tabuVal').textContent = s.val.toFixed(4);
+    document.getElementById('tabuBest').textContent = s.bestVal.toFixed(4);
+    document.getElementById('tabuDecision').textContent = s.decision;
+    document.getElementById('tabuDecision').style.color = s.decision.includes('⬆') ? '#26de81' : s.decision.includes('⭐') ? '#f7b731' : '#fc5c65';
+  },
+  onInit(s) {
+    document.getElementById('tabuStep').textContent = '0';
+    document.getElementById('tabuSize').textContent = '1/12';
+    document.getElementById('tabuVal').textContent = '—';
+    document.getElementById('tabuBest').textContent = '—';
+    document.getElementById('tabuDecision').textContent = '—';
+  }
+});
+
+// ═══════════════════════════════════
+//  RACE VISUALIZATION
+// ═══════════════════════════════════
+function resetRace() { drawLandscapeBase('raceCanvas', YS, YO+10); document.getElementById('raceResults').innerHTML = ''; }
+resetRace();
+
+function runRace() {
+  const w = 700, h = 360, ys = YS, yo = YO+10;
+
+  // HC — 500 iterations
+  let hcX = Math.random()*(HI-LO)+LO, hcV = objFn(hcX);
+  for (let i = 0; i < 500; i++) {
+    for (let j = 0; j < 8; j++) {
+      const nx = Math.max(LO,Math.min(HI,hcX+(Math.random()*2-1)*0.2));
+      const nv = objFn(nx); if (nv > hcV) { hcX = nx; hcV = nv; }
+    }
+  }
+  // SA
+  let saX = Math.random()*(HI-LO)+LO, saV = objFn(saX), saBX = saX, saBV = saV, T = 1.5;
+  for (let i = 0; i < 1500; i++) {
+    const nx = Math.max(LO,Math.min(HI,saX+(Math.random()*2-1)*0.5));
+    const nv = objFn(nx), d = nv - saV;
+    if (d > 0 || Math.random() < Math.exp(d/T)) { saX = nx; saV = nv; }
+    if (saV > saBV) { saBX = saX; saBV = saV; } T *= 0.997;
+  }
+  // Beam
+  let beam = Array.from({length:6}, ()=>Math.random()*(HI-LO)+LO);
+  for (let i = 0; i < 100; i++) {
+    let all = [...beam]; beam.forEach(s => { for(let j=0;j<4;j++) all.push(Math.max(LO,Math.min(HI,s+(Math.random()*2-1)*0.4))); });
+    all.sort((a,b)=>objFn(b)-objFn(a)); beam = all.slice(0,6);
+  }
+  const beamB = beam.reduce((a,b)=>objFn(a)>objFn(b)?a:b), beamBV = objFn(beamB);
+  // Tabu
+  let tX = Math.random()*(HI-LO)+LO, tV = objFn(tX), tBX = tX, tBV = tV, tL = [];
+  for (let i = 0; i < 300; i++) {
+    let cs = []; for (let j=0;j<20;j++) {
+      const nx=Math.max(LO,Math.min(HI,tX+(Math.random()*2-1)*0.5)),nr=Math.round(nx*10)/10,nv=objFn(nx);
+      if(!tL.includes(nr)||nv>tBV) cs.push({x:nx,val:nv});
+    }
+    if(!cs.length) cs.push({x:Math.max(LO,Math.min(HI,tX+(Math.random()*2-1)*1)),val:0});
+    cs.sort((a,b)=>b.val-a.val); tX=cs[0].x; tV=cs[0].val;
+    tL.push(Math.round(tX*10)/10); if(tL.length>12) tL.shift();
+    if(tV>tBV){tBX=tX;tBV=tV;}
+  }
+
+  const res = [
+    {name:'🏔 Hill Climbing', x:hcX, val:hcV, color:'#f7b731'},
+    {name:'🌡 Simulated Annealing', x:saBX, val:saBV, color:'#fc5c65'},
+    {name:'🔦 Local Beam (k=6)', x:beamB, val:beamBV, color:'#45aaf2'},
+    {name:'🚫 Tabu Search', x:tBX, val:tBV, color:'#26de81'},
+  ].sort((a,b) => b.val - a.val);
+
+  drawLandscapeBase('raceCanvas', ys, yo);
+  const ctx = document.getElementById('raceCanvas').getContext('2d');
+  res.forEach((r,i) => {
+    drawDot(ctx, xToPx(r.x,w), valToPy(r.val,h,ys,yo), i===0?11:8, r.color, i===0?18:8);
+    drawLabel(ctx, r.name, xToPx(r.x,w) + (r.x > 15 ? -140 : 16), valToPy(r.val,h,ys,yo) - 10, r.color);
+  });
+
+  const medals = ['🥇','🥈','🥉','4th'];
+  document.getElementById('raceResults').innerHTML = res.map((r,i) =>
+    `<div style="color:${r.color};margin:4px 0;">${medals[i]} <strong>${r.name}</strong> — f(${r.x.toFixed(2)}) = ${r.val.toFixed(4)}</div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════
+//  QUIZ
+// ═══════════════════════════════════
+function checkQuiz(btn, type) {
+  const box = btn.closest('.quiz-box');
+  if (box.dataset.answered) return;
+  box.dataset.answered = 'true';
+  btn.classList.add(type);
+  const fb = box.querySelector('.quiz-feedback');
+  if (type === 'correct') { fb.style.color = '#26de81'; fb.textContent = '✅ Correct!'; }
+  else {
+    fb.style.color = '#fc5c65'; fb.textContent = '❌ Not quite — think again!';
+    // show correct answer
+    box.querySelectorAll('.quiz-option').forEach(o => { if (o.getAttribute('onclick').includes("'correct'")) o.classList.add('correct'); });
+  }
+}
+
+// ═══════════════════════════════════
+//  SCROLL REVEAL
+// ═══════════════════════════════════
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,3228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Lab Manual - Intelligent Agents & Search Algorithms | FAST NUCES Peshawar</title>
+    <style>
+        :root {
+            --bg-main: #1a1a2e;
+            --bg-paper: #16213e;
+            --bg-card: #1f2b47;
+            --bg-highlight: #253555;
+            --text-main: #eaeaea;
+            --text-dim: #b8b8c8;
+            --text-muted: #808095;
+            --accent: #4fc3f7;
+            --accent-secondary: #81c784;
+            --accent-warning: #ffb74d;
+            --accent-danger: #ef5350;
+            --accent-purple: #b39ddb;
+            --border: #2a3f5f;
+            --success: #4caf50;
+            --start-color: #4caf50;
+            --goal-color: #ffc107;
+            --frontier-color: #2196f3;
+            --explored-color: #388e3c;
+            --wall-color: #455a64;
+            --path-color: #9c27b0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.9;
+            font-size: 16px;
+        }
+
+        .manual-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--bg-paper);
+            min-height: 100vh;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        /* ==================== HEADER ==================== */
+        .manual-header {
+            background: linear-gradient(135deg, #0d47a1, #1565c0, #1976d2);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            border-bottom: 5px solid var(--accent);
+        }
+
+        .university-logo {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .university-name {
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #bbdefb;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .department {
+            font-size: 1rem;
+            color: #90caf9;
+            margin-bottom: 1.5rem;
+        }
+
+        .manual-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .manual-subtitle {
+            font-size: 1.15rem;
+            color: #bbdefb;
+            margin-bottom: 1.5rem;
+        }
+
+        .instructor-info {
+            background: rgba(255,255,255,0.15);
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            border-radius: 10px;
+            margin-top: 0.5rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .instructor-name {
+            font-weight: 700;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .instructor-title {
+            font-size: 0.95rem;
+            color: #bbdefb;
+        }
+
+        /* ==================== NAVIGATION ==================== */
+        .nav-tabs {
+            display: flex;
+            background: var(--bg-card);
+            border-bottom: 3px solid var(--border);
+            overflow-x: auto;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-tab {
+            padding: 1.1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.3s;
+            border-bottom: 4px solid transparent;
+            margin-bottom: -3px;
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-highlight);
+            color: var(--text-main);
+        }
+
+        .nav-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            background: var(--bg-highlight);
+        }
+
+        /* ==================== CONTENT ==================== */
+        .content {
+            padding: 2.5rem;
+        }
+
+        .lab-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .lab-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ==================== LAB HEADER ==================== */
+        .lab-header {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-highlight));
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border-left: 5px solid var(--accent);
+        }
+
+        .lab-number {
+            color: var(--accent);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .lab-title {
+            font-size: 1.9rem;
+            color: var(--text-main);
+            margin: 0.5rem 0 0;
+            font-weight: 700;
+        }
+
+        /* ==================== BOXES ==================== */
+        .objectives-box {
+            background: linear-gradient(135deg, rgba(79, 195, 247, 0.1), rgba(79, 195, 247, 0.05));
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin: 1.75rem 0;
+        }
+
+        .objectives-box h4 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .objectives-box h4::before {
+            content: "🎯";
+        }
+
+        .objectives-box ul {
+            margin-left: 1.5rem;
+            color: var(--text-dim);
+        }
+
+        .objectives-box li {
+            margin: 0.6rem 0;
+            line-height: 1.7;
+        }
+
+        /* Simple Box - Green */
+        .simple-box {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            padding: 1.75rem;
+            border-radius: 12px;
+            margin: 1.75rem 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .simple-box-title {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            color: #a5d6a7;
+        }
+
+        .simple-box-title::before {
+            content: "💡";
+            font-size: 1.3rem;
+        }
+
+        .simple-box p, .simple-box li {
+            color: #e8f5e9;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .simple-box ul {
+            margin-left: 1.5rem;
+            margin-top: 0.75rem;
+        }
+
+        /* Real Life Box - Orange */
+        .real-life-box {
+            background: var(--bg-card);
+            border: 2px dashed var(--accent-warning);
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin: 1.75rem 0;
+        }
+
+        .real-life-box::before {
+            content: "🌍 Real Life Example";
+            display: block;
+            color: var(--accent-warning);
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .real-life-box p, .real-life-box li {
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
+
+        /* Key Point - Purple */
+        .key-point {
+            background: linear-gradient(135deg, rgba(179, 157, 219, 0.15), rgba(179, 157, 219, 0.05));
+            border-left: 5px solid var(--accent-purple);
+            padding: 1.5rem 1.75rem;
+            margin: 1.75rem 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .key-point strong {
+            color: var(--accent-purple);
+        }
+
+        .key-point p {
+            margin: 0.5rem 0;
+        }
+
+        /* Warning Box - Red */
+        .warning-box {
+            background: rgba(239, 83, 80, 0.1);
+            border: 2px solid var(--accent-danger);
+            border-radius: 12px;
+            padding: 1.5rem 1.75rem;
+            margin: 1.75rem 0;
+        }
+
+        .warning-box::before {
+            content: "⚠️ Common Mistake";
+            display: block;
+            color: var(--accent-danger);
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Think About It - Blue */
+        .think-box {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.15), rgba(33, 150, 243, 0.05));
+            border: 2px solid #2196f3;
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin: 1.75rem 0;
+        }
+
+        .think-box::before {
+            content: "🤔 Think About It";
+            display: block;
+            color: #2196f3;
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Practice Activity - Teal */
+        .practice-box {
+            background: linear-gradient(135deg, #004d40, #00695c);
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin: 1.75rem 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .practice-box::before {
+            content: "✏️ Practice Activity";
+            display: block;
+            color: #80cbc4;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .practice-box h4 {
+            color: #b2dfdb;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .practice-box p, .practice-box li {
+            color: #e0f2f1;
+        }
+
+        .practice-box ol, .practice-box ul {
+            margin-left: 1.5rem;
+        }
+
+        /* Remember Box */
+        .remember-box {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 193, 7, 0.05));
+            border-left: 5px solid #ffc107;
+            padding: 1.5rem 1.75rem;
+            margin: 1.75rem 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .remember-box::before {
+            content: "📌 Remember";
+            display: block;
+            color: #ffc107;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ==================== HEADINGS ==================== */
+        h2 {
+            color: var(--accent);
+            font-size: 1.5rem;
+            margin: 2.5rem 0 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h3 {
+            color: var(--text-main);
+            font-size: 1.25rem;
+            margin: 2rem 0 1rem;
+        }
+
+        h4 {
+            color: var(--accent-secondary);
+            font-size: 1.1rem;
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        p {
+            margin: 1rem 0;
+            color: var(--text-dim);
+            line-height: 1.9;
+        }
+
+        /* ==================== DEMO BOX ==================== */
+        .demo-box {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            margin: 1.75rem 0;
+            overflow: hidden;
+        }
+
+        .demo-header {
+            background: var(--bg-highlight);
+            padding: 1rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .demo-title {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 1.05rem;
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.1rem;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-main);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--bg-highlight);
+            border-color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #29b6f6);
+            color: #000;
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #29b6f6, var(--accent));
+            box-shadow: 0 4px 15px rgba(79, 195, 247, 0.3);
+        }
+
+        .demo-content {
+            padding: 1.75rem;
+        }
+
+        .demo-stats {
+            display: flex;
+            gap: 2rem;
+            padding: 1rem 1.25rem;
+            background: var(--bg-highlight);
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .stat-label { color: var(--text-muted); }
+        .stat-value { color: var(--accent); font-weight: 700; }
+
+        .animation-status {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-main);
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-running { color: var(--accent); }
+        .status-complete { color: var(--success); font-weight: 600; }
+
+        /* ==================== GRID ==================== */
+        .grid-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 3px;
+            background: var(--border);
+            padding: 3px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .cell {
+            width: 38px;
+            height: 38px;
+            background: var(--bg-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cell.wall { background: var(--wall-color); }
+        .cell.start { background: var(--start-color); color: white; }
+        .cell.goal { background: var(--goal-color); color: #333; }
+        .cell.frontier { background: var(--frontier-color); animation: pulse 1s infinite; }
+        .cell.explored { background: var(--explored-color); }
+        .cell.path { background: var(--path-color); animation: pathGlow 0.5s ease; }
+        .cell.current { background: #e91e63; transform: scale(1.15); z-index: 10; box-shadow: 0 0 15px #e91e63; }
+
+        .cell.cost-1 { background: #2e7d32; }
+        .cell.cost-3 { background: #ef6c00; }
+        .cell.cost-5 { background: #c62828; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.95); }
+        }
+
+        @keyframes pathGlow {
+            from { transform: scale(1.3); box-shadow: 0 0 20px var(--path-color); }
+            to { transform: scale(1); box-shadow: none; }
+        }
+
+        /* ==================== LEGEND ==================== */
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--bg-main);
+            border-radius: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* ==================== CODE BLOCK ==================== */
+        .code-box {
+            background: #0d1117;
+            border-radius: 12px;
+            margin: 1.75rem 0;
+            overflow: hidden;
+            border: 1px solid #30363d;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .code-header {
+            background: #161b22;
+            padding: 0.85rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .code-filename {
+            color: #8b949e;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .code-filename::before {
+            content: "🐍";
+            font-size: 1.1rem;
+        }
+
+        .code-section-title {
+            background: #21262d;
+            color: #58a6ff;
+            padding: 0.6rem 1.25rem;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #30363d;
+            font-weight: 600;
+        }
+
+        pre.code-block {
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.92rem;
+            line-height: 1.75;
+            color: #c9d1d9;
+            margin: 0;
+        }
+
+        .code-block .comment { color: #8b949e; font-style: italic; }
+        .code-block .keyword { color: #ff7b72; }
+        .code-block .function { color: #d2a8ff; }
+        .code-block .string { color: #a5d6ff; }
+        .code-block .number { color: #79c0ff; }
+        .code-block .builtin { color: #ffa657; }
+
+        /* ==================== TABLES ==================== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.75rem 0;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        th, td {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-highlight);
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        td { color: var(--text-dim); }
+
+        tr:hover td { background: rgba(79, 195, 247, 0.05); }
+
+        .yes { color: var(--success); font-weight: 700; }
+        .no { color: var(--accent-danger); font-weight: 700; }
+
+        /* ==================== CARDS ==================== */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin: 1.75rem 0;
+        }
+
+        .compare-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .compare-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .compare-card h4 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .compare-card .icon { font-size: 1.5rem; }
+
+        /* ==================== AGENT CARDS ==================== */
+        .agent-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin: 1.75rem 0;
+        }
+
+        .agent-card {
+            background: var(--bg-card);
+            border: 3px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .agent-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .agent-card.selected {
+            border-color: var(--accent);
+            background: var(--bg-highlight);
+            box-shadow: 0 0 20px rgba(79, 195, 247, 0.2);
+        }
+
+        .agent-card .emoji {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .agent-card h4 {
+            margin: 0 0 0.5rem;
+            color: var(--text-main);
+            font-size: 1.15rem;
+        }
+
+        .agent-card p {
+            font-size: 0.95rem;
+            margin: 0;
+            color: var(--text-dim);
+        }
+
+        /* ==================== DEFINITION ==================== */
+        .definition {
+            display: flex;
+            gap: 1.25rem;
+            padding: 1.25rem;
+            background: var(--bg-card);
+            border-radius: 10px;
+            margin: 1rem 0;
+            align-items: flex-start;
+            border-left: 4px solid var(--accent);
+        }
+
+        .definition-term {
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 130px;
+            font-size: 1.05rem;
+        }
+
+        .definition-meaning {
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        /* ==================== STEPS LIST ==================== */
+        .steps-list {
+            counter-reset: steps;
+            list-style: none;
+            margin: 1.5rem 0;
+            padding-left: 0;
+        }
+
+        .steps-list li {
+            counter-increment: steps;
+            padding: 1rem 0 1rem 3.5rem;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        .steps-list li::before {
+            content: counter(steps);
+            position: absolute;
+            left: 0;
+            top: 1rem;
+            width: 2.25rem;
+            height: 2.25rem;
+            background: linear-gradient(135deg, var(--accent), #29b6f6);
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        /* ==================== PEAS ==================== */
+        .peas-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 1.25rem 0;
+        }
+
+        .peas-column {
+            background: var(--bg-card);
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            min-height: 180px;
+            transition: all 0.3s;
+        }
+
+        .peas-column:hover {
+            border-color: var(--accent);
+        }
+
+        .peas-column h5 {
+            text-align: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        .peas-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .peas-item {
+            background: var(--bg-highlight);
+            padding: 0.6rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: move;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .peas-item:hover {
+            background: var(--accent);
+            color: #000;
+            transform: scale(1.02);
+        }
+
+        .peas-item.correct {
+            border-color: var(--success);
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        .peas-item.incorrect {
+            border-color: var(--accent-danger);
+            background: rgba(239, 83, 80, 0.2);
+        }
+
+        .peas-bank {
+            background: var(--bg-highlight);
+            padding: 1.25rem;
+            border-radius: 10px;
+            margin-top: 1.25rem;
+        }
+
+        .peas-bank-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.75rem;
+        }
+
+        /* ==================== HEATMAP ==================== */
+        .heatmap-controls {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .heatmap-btn {
+            padding: 0.6rem 1.25rem;
+            border: 2px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-dim);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .heatmap-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .heatmap-btn.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+
+        /* ==================== QUIZ ==================== */
+        .quiz-box {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin: 1.75rem 0;
+        }
+
+        .quiz-question {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 1.25rem;
+            font-weight: 500;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .quiz-option {
+            padding: 1rem 1.25rem;
+            background: var(--bg-highlight);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-dim);
+        }
+
+        .quiz-option:hover {
+            border-color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        .quiz-option.correct {
+            border-color: var(--success);
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--success);
+        }
+
+        .quiz-option.wrong {
+            border-color: var(--accent-danger);
+            background: rgba(239, 83, 80, 0.15);
+        }
+
+        /* ==================== SUMMARY ==================== */
+        .summary-box {
+            background: linear-gradient(135deg, #1a237e, #283593);
+            padding: 1.75rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .summary-box h4 {
+            color: #9fa8da;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1.15rem;
+        }
+
+        .summary-box ul {
+            margin-left: 1.5rem;
+            color: #c5cae9;
+        }
+
+        .summary-box li {
+            margin: 0.6rem 0;
+            line-height: 1.7;
+        }
+
+        /* ==================== SPEED CONTROL ==================== */
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .speed-slider {
+            width: 90px;
+            height: 6px;
+            -webkit-appearance: none;
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* ==================== FOOTER ==================== */
+        .manual-footer {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-highlight));
+            padding: 2rem;
+            text-align: center;
+            border-top: 3px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        .manual-footer p {
+            margin: 0.3rem 0;
+            color: var(--text-muted);
+        }
+
+        /* ==================== PRINT BUTTON ==================== */
+        .print-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            padding: 0.85rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent), #29b6f6);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.95rem;
+            box-shadow: 0 6px 20px rgba(79, 195, 247, 0.4);
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        .print-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(79, 195, 247, 0.5);
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .peas-grid { grid-template-columns: repeat(2, 1fr); }
+            .cell { width: 30px; height: 30px; font-size: 0.65rem; }
+            .content { padding: 1.5rem; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .agent-cards { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media print {
+            .nav-tabs, .demo-controls, .print-btn { display: none; }
+            .lab-section { display: block !important; page-break-before: always; }
+            body { background: white; color: black; }
+            .manual-container { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="manual-container">
+        <!-- ==================== HEADER ==================== -->
+        <header class="manual-header">
+            <div class="university-logo">🎓</div>
+            <div class="university-name">FAST National University of Computer and Emerging Sciences</div>
+            <div class="department">Department of Computer Science - Peshawar Campus</div>
+            <h1 class="manual-title">Artificial Intelligence Lab Manual</h1>
+            <div class="manual-subtitle">Intelligent Agents & Search Algorithms</div>
+            <div class="instructor-info">
+                <div class="instructor-name">Hamza Raziq Khan</div>
+                <div class="instructor-title">Instructor, CS Department</div>
+            </div>
+        </header>
+
+        <!-- ==================== NAVIGATION ==================== -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showLab('intro')">Introduction</button>
+            <button class="nav-tab" onclick="showLab('agents')">Lab 1: Agents</button>
+            <button class="nav-tab" onclick="showLab('bfs-dfs')">Lab 2: BFS & DFS</button>
+            <button class="nav-tab" onclick="showLab('ucs')">Lab 3: UCS</button>
+            <button class="nav-tab" onclick="showLab('informed')">Lab 4: A* Search</button>
+            <button class="nav-tab" onclick="showLab('practice')">Lab 5: Practice</button>
+        </nav>
+
+        <div class="content">
+            <!-- ==================== INTRODUCTION ==================== -->
+            <section id="intro" class="lab-section active">
+                <div class="lab-header">
+                    <div class="lab-number">Introduction</div>
+                    <h1 class="lab-title">What is Search in Artificial Intelligence?</h1>
+                </div>
+
+                <div class="objectives-box">
+                    <h4>What You Will Learn</h4>
+                    <ul>
+                        <li>What "search" means in Artificial Intelligence</li>
+                        <li>Why finding things is actually a hard problem for computers</li>
+                        <li>Basic vocabulary we use when talking about search</li>
+                        <li>The difference between uninformed and informed search</li>
+                    </ul>
+                </div>
+
+                <h2>🤔 The Problem: Finding Things is Hard!</h2>
+
+                <div class="simple-box">
+                    <div class="simple-box-title">Let's Start Simple</div>
+                    <p>Imagine you lost your phone somewhere in your house. How would you find it?</p>
+                    <ul>
+                        <li><strong>Option 1:</strong> Check every single room one by one (slow but guaranteed)</li>
+                        <li><strong>Option 2:</strong> Think "where did I last use it?" and check there first (smart!)</li>
+                        <li><strong>Option 3:</strong> Randomly walk around hoping to find it (not smart!)</li>
+                    </ul>
+                    <p style="margin-top: 1rem;"><strong>AI search is exactly this!</strong> It's about finding something (called the <em>goal</em>) in a space (called the <em>environment</em>) using a smart <em>strategy</em>.</p>
+                </div>
+
+                <div class="real-life-box">
+                    <p><strong>Google Maps Finding Your Route:</strong> When you ask Google Maps for directions from your home to FAST University, it doesn't check every possible road in Pakistan! That would take forever. Instead, it uses smart search strategies to find good routes quickly. The same algorithms you'll learn here power Google Maps, game AI, robot navigation, and much more!</p>
+                </div>
+
+                <h2>📚 Important Words to Know</h2>
+                
+                <p>Before we dive deeper, let's learn the vocabulary. Think of these words as your tools - you need to know what each tool is called before you can use it!</p>
+
+                <div class="definition">
+                    <div class="definition-term">Agent</div>
+                    <div class="definition-meaning">The thing that does the searching. It could be YOU when looking for your phone, a ROBOT finding its way through a warehouse, or a PROGRAM playing chess. The agent is the "searcher."</div>
+                </div>
+
+                <div class="definition">
+                    <div class="definition-term">Environment</div>
+                    <div class="definition-meaning">The place where the agent searches. Your house when looking for your phone. A maze when finding a path. A chessboard when playing chess. The environment is the "world" the agent lives in.</div>
+                </div>
+
+                <div class="definition">
+                    <div class="definition-term">State</div>
+                    <div class="definition-meaning">A snapshot of where we are RIGHT NOW. "I am in the kitchen" is a state. "I am at position (3,4) in the maze" is a state. "The chess pieces are in these positions" is a state.</div>
+                </div>
+
+                <div class="definition">
+                    <div class="definition-term">Goal</div>
+                    <div class="definition-meaning">What we want to find or achieve. Finding the phone. Reaching the exit of the maze. Checkmating the opponent. The goal is our "target."</div>
+                </div>
+
+                <div class="definition">
+                    <div class="definition-term">Action</div>
+                    <div class="definition-meaning">What the agent can do to change its state. "Go left", "Go right", "Open the door", "Move the knight." Actions are the "moves" available to the agent.</div>
+                </div>
+
+                <div class="definition">
+                    <div class="definition-term">Path</div>
+                    <div class="definition-meaning">A sequence of actions that takes us from the starting state to the goal. Like a recipe: "Go to kitchen → Check under table → Check on counter → Found phone!"</div>
+                </div>
+
+                <div class="think-box">
+                    <p><strong>Think about a Pizza Delivery Robot:</strong></p>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem; color: var(--text-dim);">
+                        <li><strong>Agent:</strong> The delivery robot</li>
+                        <li><strong>Environment:</strong> The city streets</li>
+                        <li><strong>State:</strong> Current location (GPS coordinates)</li>
+                        <li><strong>Goal:</strong> Customer's address</li>
+                        <li><strong>Actions:</strong> Turn left, turn right, go straight, stop</li>
+                        <li><strong>Path:</strong> The route from restaurant to customer</li>
+                    </ul>
+                </div>
+
+                <h2>🔍 Two Types of Search</h2>
+
+                <p>Not all search strategies are equal! We divide them into two main categories:</p>
+
+                <div class="comparison-grid">
+                    <div class="compare-card">
+                        <h4 style="color: var(--accent);"><span class="icon">🔮</span> Uninformed Search</h4>
+                        <p>Also called "Blind Search." You have <strong>NO idea</strong> where the goal is. You search systematically, trying different directions without any hints.</p>
+                        <p style="margin-top: 0.5rem;"><strong>Like:</strong> Looking for your keys in a dark room - you can only feel around blindly.</p>
+                        <p style="color: var(--accent); margin-top: 0.5rem; font-weight: 600;">Examples: BFS, DFS, UCS</p>
+                    </div>
+                    <div class="compare-card">
+                        <h4 style="color: var(--accent-secondary);"><span class="icon">🧭</span> Informed Search</h4>
+                        <p>Also called "Heuristic Search." You have <strong>SOME idea</strong> about where the goal might be. Like having a compass that points roughly in the right direction.</p>
+                        <p style="margin-top: 0.5rem;"><strong>Like:</strong> Looking for your keys while someone says "warmer... warmer... colder..."</p>
+                        <p style="color: var(--accent-secondary); margin-top: 0.5rem; font-weight: 600;">Examples: Greedy Search, A*</p>
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <strong>Which is better?</strong>
+                    <p>Informed search is usually faster because it uses hints (heuristics). But you need to have those hints! Uninformed search works when you have zero information about where the goal might be.</p>
+                </div>
+
+                <h2>🎮 Why Does Search Strategy Matter?</h2>
+
+                <div class="simple-box">
+                    <div class="simple-box-title">A Simple Example</div>
+                    <p>Imagine a maze with 1 million possible paths. If you check paths randomly:</p>
+                    <ul>
+                        <li>Worst case: Check all 1 million paths (very slow!)</li>
+                        <li>Average case: Check 500,000 paths (still slow!)</li>
+                    </ul>
+                    <p style="margin-top: 0.75rem;">But with a smart strategy, you might find the goal by checking only 100 paths! <strong>That's the power of good search algorithms.</strong></p>
+                </div>
+
+                <div class="real-life-box">
+                    <p><strong>Chess Computer Example:</strong> In chess, there are more possible games than atoms in the universe (approximately 10^120). A computer cannot check every possibility! Chess engines like Stockfish use smart search algorithms (including A*-like techniques) to find good moves by exploring only the most promising paths.</p>
+                </div>
+
+                <div class="practice-box">
+                    <h4>Quick Practice: Identify the Components</h4>
+                    <p>For each scenario, identify the Agent, Environment, State, Goal, and possible Actions:</p>
+                    <ol>
+                        <li style="margin: 0.75rem 0;"><strong>A vacuum cleaner robot cleaning a room</strong></li>
+                        <li style="margin: 0.75rem 0;"><strong>Google Maps finding a route from Peshawar to Lahore</strong></li>
+                        <li style="margin: 0.75rem 0;"><strong>A game AI playing Pac-Man</strong></li>
+                    </ol>
+                    <p style="margin-top: 1rem; color: #80cbc4;"><em>Think about these before moving to the next section. Write down your answers!</em></p>
+                </div>
+
+                <div class="summary-box">
+                    <h4>📝 Introduction Summary</h4>
+                    <ul>
+                        <li><strong>Search</strong> = Finding a goal in an environment using a strategy</li>
+                        <li><strong>Agent</strong> = The searcher (robot, program, etc.)</li>
+                        <li><strong>Environment</strong> = The world being searched</li>
+                        <li><strong>State</strong> = Current situation snapshot</li>
+                        <li><strong>Goal</strong> = What we're trying to find/achieve</li>
+                        <li><strong>Actions</strong> = Possible moves the agent can make</li>
+                        <li><strong>Uninformed Search</strong> = Blind, no hints about goal location</li>
+                        <li><strong>Informed Search</strong> = Uses hints (heuristics) to guide search</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ==================== LAB 1: AGENTS ==================== -->
+            <section id="agents" class="lab-section">
+                <div class="lab-header">
+                    <div class="lab-number">Lab 1</div>
+                    <h1 class="lab-title">Intelligent Agents</h1>
+                </div>
+
+                <div class="objectives-box">
+                    <h4>Lab Objectives</h4>
+                    <ul>
+                        <li>Understand what makes an "intelligent agent"</li>
+                        <li>Learn the 4 types of agents (from simple to complex)</li>
+                        <li>Master the PEAS framework for describing agents</li>
+                        <li>Be able to design and describe any agent using PEAS</li>
+                    </ul>
+                </div>
+
+                <h2>🤖 What is an Intelligent Agent?</h2>
+
+                <div class="simple-box">
+                    <div class="simple-box-title">The Simplest Definition</div>
+                    <p>An agent is anything that can:</p>
+                    <ol>
+                        <li><strong>SENSE</strong> its environment (through sensors)</li>
+                        <li><strong>THINK</strong> about what to do (process information)</li>
+                        <li><strong>ACT</strong> on the environment (through actuators)</li>
+                    </ol>
+                    <p style="margin-top: 1rem;">That's it! <strong>Sense → Think → Act.</strong> Your brain is an agent. A robot is an agent. Even a simple thermostat is an agent!</p>
+                </div>
+
+                <div class="real-life-box">
+                    <p><strong>Self-Driving Car as an Agent:</strong></p>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li><strong>SENSE:</strong> Cameras see the road, radar detects obstacles, GPS knows location</li>
+                        <li><strong>THINK:</strong> AI algorithms process sensor data, decide what to do</li>
+                        <li><strong>ACT:</strong> Steering wheel turns, accelerator presses, brakes apply</li>
+                    </ul>
+                </div>
+
+                <h2>👥 The 4 Types of Agents</h2>
+
+                <p>Agents can be simple or complex. Here are the 4 types, ordered from simplest to most intelligent. Click each card to learn more!</p>
+
+                <div class="agent-cards">
+                    <div class="agent-card" onclick="selectAgentType(this, 1)">
+                        <div class="emoji">⚡</div>
+                        <h4>Simple Reflex Agent</h4>
+                        <p>Acts only on what it sees RIGHT NOW. No memory at all.</p>
+                    </div>
+                    <div class="agent-card" onclick="selectAgentType(this, 2)">
+                        <div class="emoji">🧠</div>
+                        <h4>Model-Based Reflex Agent</h4>
+                        <p>Has MEMORY. Keeps track of things it can't see anymore.</p>
+                    </div>
+                    <div class="agent-card" onclick="selectAgentType(this, 3)">
+                        <div class="emoji">🎯</div>
+                        <h4>Goal-Based Agent</h4>
+                        <p>Has a GOAL. Thinks about how to achieve it.</p>
+                    </div>
+                    <div class="agent-card" onclick="selectAgentType(this, 4)">
+                        <div class="emoji">⚖️</div>
+                        <h4>Utility-Based Agent</h4>
+                        <p>Has goals + PREFERENCES. Picks the BEST action among options.</p>
+                    </div>
+                </div>
+
+                <div id="agentExplanation" class="key-point" style="display: none;"></div>
+
+                <h3>Detailed Comparison Table</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Agent Type</th>
+                            <th>What It Knows</th>
+                            <th>Real-World Example</th>
+                            <th>Limitation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Simple Reflex</strong></td>
+                            <td>Only current perception</td>
+                            <td>Thermostat: Cold? Heat on. Hot? Heat off.</td>
+                            <td>Can't handle situations it hasn't been programmed for</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Model-Based</strong></td>
+                            <td>Current + Past (has memory)</td>
+                            <td>Vacuum robot that remembers which rooms are cleaned</td>
+                            <td>Doesn't have goals, just reacts to situations</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Goal-Based</strong></td>
+                            <td>Current + Past + Goal</td>
+                            <td>GPS navigation: "I want to reach Lahore"</td>
+                            <td>Doesn't consider quality of path (any path to goal is fine)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Utility-Based</strong></td>
+                            <td>Current + Past + Goal + Preferences</td>
+                            <td>GPS: "Fastest route" vs "Shortest route" vs "Scenic route"</td>
+                            <td>Most complex, requires defining utility function</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="think-box">
+                    <p><strong>Which type of agent is a chess-playing AI?</strong></p>
+                    <p style="margin-top: 0.5rem; color: var(--text-dim);">It's a <strong>Utility-Based Agent</strong>! It has a goal (win the game), but it also evaluates how "good" each board position is (utility). It chooses moves that lead to positions with highest utility.</p>
+                </div>
+
+                <h2>📋 The PEAS Framework</h2>
+
+                <div class="simple-box">
+                    <div class="simple-box-title">What is PEAS?</div>
+                    <p>PEAS is a way to completely describe any agent. Before building an AI agent, you MUST define these 4 things:</p>
+                    <ul>
+                        <li><strong style="color: #81c784;">P</strong>erformance Measure - How do we know the agent is doing a good job?</li>
+                        <li><strong style="color: #4fc3f7;">E</strong>nvironment - Where does the agent operate? What's around it?</li>
+                        <li><strong style="color: #b39ddb;">A</strong>ctuators - How does the agent ACT on the environment?</li>
+                        <li><strong style="color: #ffb74d;">S</strong>ensors - How does the agent SENSE the environment?</li>
+                    </ul>
+                </div>
+
+                <h3>PEAS Examples</h3>
+
+                <div class="comparison-grid">
+                    <div class="compare-card">
+                        <h4 style="color: #81c784;">P - Performance</h4>
+                        <p>"How do we score the agent?"</p>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem; color: var(--text-dim);">
+                            <li>Taxi: Safe arrival, minimize time, maximize profit</li>
+                            <li>Vacuum: Clean floor, low battery usage</li>
+                            <li>Chess: Win the game</li>
+                        </ul>
+                    </div>
+                    <div class="compare-card">
+                        <h4 style="color: #4fc3f7;">E - Environment</h4>
+                        <p>"Where does the agent live?"</p>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem; color: var(--text-dim);">
+                            <li>Taxi: Roads, traffic, pedestrians, weather</li>
+                            <li>Vacuum: Rooms, furniture, dirt, walls</li>
+                            <li>Chess: 8x8 board, 32 pieces, opponent</li>
+                        </ul>
+                    </div>
+                    <div class="compare-card">
+                        <h4 style="color: #b39ddb;">A - Actuators</h4>
+                        <p>"How does the agent act?"</p>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem; color: var(--text-dim);">
+                            <li>Taxi: Steering, accelerator, brake, horn</li>
+                            <li>Vacuum: Wheels, suction, brushes</li>
+                            <li>Chess: Move pieces on board</li>
+                        </ul>
+                    </div>
+                    <div class="compare-card">
+                        <h4 style="color: #ffb74d;">S - Sensors</h4>
+                        <p>"How does the agent perceive?"</p>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem; color: var(--text-dim);">
+                            <li>Taxi: Cameras, GPS, speedometer, microphone</li>
+                            <li>Vacuum: Dirt sensor, bump sensor, camera</li>
+                            <li>Chess: Visual input of board state</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Interactive PEAS Exercise</h3>
+
+                <p>Let's practice! Drag each item to the correct PEAS category for a <strong>Vacuum Cleaner Robot</strong>:</p>
+
+                <div class="demo-box">
+                    <div class="demo-header">
+                        <span class="demo-title">PEAS Drag-and-Drop Exercise</span>
+                        <button class="btn" onclick="resetPEAS()">Reset</button>
+                    </div>
+                    <div class="demo-content">
+                        <div class="peas-grid">
+                            <div class="peas-column" id="peas-P" ondrop="dropItem(event, 'P')" ondragover="allowDrop(event)">
+                                <h5 style="color: #81c784;">P - Performance</h5>
+                                <div class="peas-items"></div>
+                            </div>
+                            <div class="peas-column" id="peas-E" ondrop="dropItem(event, 'E')" ondragover="allowDrop(event)">
+                                <h5 style="color: #4fc3f7;">E - Environment</h5>
+                                <div class="peas-items"></div>
+                            </div>
+                            <div class="peas-column" id="peas-A" ondrop="dropItem(event, 'A')" ondragover="allowDrop(event)">
+                                <h5 style="color: #b39ddb;">A - Actuators</h5>
+                                <div class="peas-items"></div>
+                            </div>
+                            <div class="peas-column" id="peas-S" ondrop="dropItem(event, 'S')" ondragover="allowDrop(event)">
+                                <h5 style="color: #ffb74d;">S - Sensors</h5>
+                                <div class="peas-items"></div>
+                            </div>
+                        </div>
+                        <div class="peas-bank">
+                            <div style="color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 500;">Drag items from here:</div>
+                            <div class="peas-bank-items" id="peasItemsBank"></div>
+                        </div>
+                        <div id="peasResult" style="margin-top: 1rem; text-align: center; font-weight: 600;"></div>
+                    </div>
+                </div>
+
+                <h2>🌍 Environment Properties</h2>
+
+                <p>Environments can have different properties that affect how we design our agent:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Description</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Fully vs Partially Observable</strong></td>
+                            <td>Can the agent see everything?</td>
+                            <td>Chess = Fully (see whole board). Poker = Partially (can't see opponent's cards)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Deterministic vs Stochastic</strong></td>
+                            <td>Is the next state predictable?</td>
+                            <td>Chess = Deterministic. Backgammon = Stochastic (dice rolls)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Static vs Dynamic</strong></td>
+                            <td>Does environment change while agent thinks?</td>
+                            <td>Crossword = Static. Self-driving car = Dynamic (cars move)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Discrete vs Continuous</strong></td>
+                            <td>Are states/actions countable?</td>
+                            <td>Chess = Discrete (finite positions). Robot arm = Continuous (any angle)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="practice-box">
+                    <h4>Practice Activity: Design Your Own Agent</h4>
+                    <p>Choose ONE of these scenarios and write a complete PEAS description:</p>
+                    <ol>
+                        <li><strong>Medical Diagnosis AI</strong> - An AI that helps doctors diagnose diseases</li>
+                        <li><strong>Smart Traffic Light System</strong> - Traffic lights that adapt to traffic flow</li>
+                        <li><strong>Online Shopping Recommendation Agent</strong> - Like Amazon's "you might also like"</li>
+                        <li><strong>Automated Essay Grading System</strong> - AI that grades student essays</li>
+                    </ol>
+                    <p style="margin-top: 1rem;">For your chosen scenario, clearly define:</p>
+                    <ul>
+                        <li>Performance Measure: What makes this agent "good"?</li>
+                        <li>Environment: Where does it operate? What factors affect it?</li>
+                        <li>Actuators: How does it output its decisions?</li>
+                        <li>Sensors: What inputs does it receive?</li>
+                    </ul>
+                    <p style="margin-top: 1rem; color: #80cbc4;"><em>Write your answer in your lab notebook. Be specific!</em></p>
+                </div>
+
+                <div class="summary-box">
+                    <h4>📝 Lab 1 Summary</h4>
+                    <ul>
+                        <li><strong>Agent</strong> = Anything that Senses, Thinks, and Acts</li>
+                        <li><strong>4 Agent Types</strong> (in order of complexity):
+                            <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>Simple Reflex (no memory)</li>
+                                <li>Model-Based (has memory)</li>
+                                <li>Goal-Based (has goal)</li>
+                                <li>Utility-Based (has preferences)</li>
+                            </ol>
+                        </li>
+                        <li><strong>PEAS Framework</strong> = Performance, Environment, Actuators, Sensors</li>
+                        <li>Always define PEAS before building an agent!</li>
+                        <li>Environment properties affect agent design (observable, deterministic, static, discrete)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ==================== LAB 2: BFS & DFS ==================== -->
+            <section id="bfs-dfs" class="lab-section">
+                <div class="lab-header">
+                    <div class="lab-number">Lab 2</div>
+                    <h1 class="lab-title">Breadth-First Search (BFS) & Depth-First Search (DFS)</h1>
+                </div>
+
+                <div class="objectives-box">
+                    <h4>Lab Objectives</h4>
+                    <ul>
+                        <li>Understand how BFS works (explore level by level like waves)</li>
+                        <li>Understand how DFS works (explore deep first like diving)</li>
+                        <li>Know the pros and cons of each algorithm</li>
+                        <li>Implement both algorithms in Python</li>
+                        <li>Know when to use which algorithm</li>
+                    </ul>
+                </div>
+
+                <h2>🌊 BFS: Breadth-First Search</h2>
+
+                <div class="simple-box">
+                    <div class="simple-box-title">BFS in One Sentence</div>
+                    <p>BFS explores ALL neighbors at the current level before moving to the next level. Like water spreading in all directions equally!</p>
+                </div>
+
+                <h3>The Water Ripple Analogy</h3>
+
+                <div class="real-life-box">
+                    <p><strong>Imagine dropping a stone in a pond:</strong></p>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>First, ripples reach water 1 meter away (level 1)</li>
+                        <li>Then, ripples reach water 2 meters away (level 2)</li>
+                        <li>Then, ripples reach water 3 meters away (level 3)</li>
+                        <li>And so on...</li>
+                    </ul>
+                    <p style="margin-top: 0.75rem;">BFS works exactly like this! It visits all nodes at distance 1 first, then all nodes at distance 2, then distance 3, and so on.</p>
+                </div>
+
+                <h3>How BFS Works - Step by Step</h3>
+
+                <ol class="steps-list">
+                    <li><strong>Start</strong> at the beginning node. Add it to a <strong>QUEUE</strong> (waiting line).</li>
+                    <li><strong>Take out</strong> the FIRST node from the queue (the one that's been waiting longest).</li>
+                    <li><strong>Check</strong> if this node is the goal. If YES, we're done! 🎉</li>
+                    <li><strong>If not</strong>, add ALL its unvisited neighbors to the END of the queue.</li>
+                    <li><strong>Repeat</strong> steps 2-4 until you find the goal or the queue is empty.</li>
+                </ol>
+
+                <div class="key-point">
+                    <strong>The Magic Word: QUEUE</strong>
+                    <p>BFS uses a <strong>Queue</strong> data structure. Queue = First In, First Out (FIFO). Just like a line at a ticket counter - first person in line gets served first!</p>
+                </div>
+
+                <h3>BFS Interactive Visualization</h3>
+
+                <div class="demo-box">
+                    <div class="demo-header">
+                        <span class="demo-title">🌊 Watch BFS Spread Like Water</span>
+                        <div class="demo-controls">
+                            <button class="btn btn-primary" onclick="runBFS()">▶ Play</button>
+                            <button class="btn" onclick="stepBFS()">Step</button>
+                            <button class="btn" onclick="resetBFS()">Reset</button>
+                            <div class="speed-control">
+                                <span style="color: var(--text-muted); font-size: 0.85rem;">Speed:</span>
+                                <input type="range" class="speed-slider" id="bfsSpeed" min="100" max="800" value="400">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="demo-content">
+                        <div class="legend">
+                            <div class="legend-item"><div class="legend-color" style="background: var(--start-color);"></div> Start (S)</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--goal-color);"></div> Goal (G)</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--frontier-color);"></div> Queue (waiting)</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--explored-color);"></div> Explored</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--path-color);"></div> Final Path</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--wall-color);"></div> Wall</div>
+                        </div>
+                        <div class="grid-container">
+                            <div id="bfsGrid" class="grid" style="grid-template-columns: repeat(10, 38px);"></div>
+                        </div>
+                        <div class="animation-status" id="bfsStatus">Click "Play" to watch BFS explore level by level!</div>
+                    </div>
+                    <div class="demo-stats">
+                        <div class="stat"><span class="stat-label">Nodes Explored:</span> <span class="stat-value" id="bfsExplored">0</span></div>
+                        <div class="stat"><span class="stat-label">Queue Size:</span> <span class="stat-value" id="bfsQueue">1</span></div>
+                        <div class="stat"><span class="stat-label">Path Length:</span> <span class="stat-value" id="bfsPathLen">-</span></div>
+                    </div>
+                </div>
+
+                <div class="remember-box">
+                    <p><strong>BFS ALWAYS finds the shortest path</strong> (in terms of number of steps) because it explores level by level. The first time it reaches the goal, that's guaranteed to be the shortest path!</p>
+                </div>
+
+                <h2>🏊 DFS: Depth-First Search</h2>
+
+                <div class="simple-box">
+                    <div class="simple-box-title">DFS in One Sentence</div>
+                    <p>DFS explores as DEEP as possible before backtracking. Like a diver going to the bottom of the ocean, then coming back up to try another path!</p>
+                </div>
+
+                <h3>The Maze Explorer Analogy</h3>
+
+                <div class="real-life-box">
+                    <p><strong>Imagine you're in a maze with many corridors:</strong></p>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>You pick ONE corridor and walk as far as possible</li>
+                        <li>When you hit a dead end, you BACKTRACK to the last fork</li>
+                        <li>Then try a different corridor from there</li>
+                        <li>Keep going until you find the exit!</li>
+                    </ul>
+                    <p style="margin-top: 0.75rem;">This is exactly how DFS works - go deep, backtrack, try another path.</p>
+                </div>
+
+                <h3>How DFS Works - Step by Step</h3>
+
+                <ol class="steps-list">
+                    <li><strong>Start</strong> at the beginning node. Add it to a <strong>STACK</strong> (pile of plates).</li>
+                    <li><strong>Take out</strong> the TOP node from the stack (the most recently added one).</li>
+                    <li><strong>Check</strong> if this node is the goal. If YES, we're done! 🎉</li>
+                    <li><strong>If not</strong>, add ALL its unvisited neighbors to the TOP of the stack.</li>
+                    <li><strong>Repeat</strong> steps 2-4 until you find the goal or the stack is empty.</li>
+                </ol>
+
+                <div class="key-point">
+                    <strong>The Magic Word: STACK</strong>
+                    <p>DFS uses a <strong>Stack</strong> data structure. Stack = Last In, First Out (LIFO). Just like a stack of plates - you add to the top and take from the top!</p>
+                </div>
+
+                <h3>DFS Interactive Visualization</h3>
+
+                <div class="demo-box">
+                    <div class="demo-header">
+                        <span class="demo-title">🏊 Watch DFS Dive Deep First</span>
+                        <div class="demo-controls">
+                            <button class="btn btn-primary" onclick="runDFS()">▶ Play</button>
+                            <button class="btn" onclick="stepDFS()">Step</button>
+                            <button class="btn" onclick="resetDFS()">Reset</button>
+                        </div>
+                    </div>
+                    <div class="demo-content">
+                        <div class="grid-container">
+                            <div id="dfsGrid" class="grid" style="grid-template-columns: repeat(10, 38px);"></div>
+                        </div>
+                        <div class="animation-status" id="dfsStatus">Click "Play" to watch DFS go deep before backtracking!</div>
+                    </div>
+                    <div class="demo-stats">
+                        <div class="stat"><span class="stat-label">Nodes Explored:</span> <span class="stat-value" id="dfsExplored">0</span></div>
+                        <div class="stat"><span class="stat-label">Stack Size:</span> <span class="stat-value" id="dfsStack">1</span></div>
+                        <div class="stat"><span class="stat-label">Path Length:</span> <span class="stat-value" id="dfsPathLen">-</span></div>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <p><strong>DFS does NOT guarantee the shortest path!</strong> It might find a long winding path even if a shorter one exists. However, DFS uses much less memory than BFS because it only needs to remember the current path, not all nodes at each level.</p>
+                </div>
+
+                <h2>⚔️ BFS vs DFS Comparison</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>BFS 🌊</th>
+                            <th>DFS 🏊</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Data Structure</strong></td>
+                            <td>Queue (FIFO)</td>
+                            <td>Stack (LIFO)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Exploration Pattern</strong></td>
+                            <td>Level by level (wide)</td>
+                            <td>Path by path (deep)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Finds Shortest Path?</strong></td>
+                            <td class="yes">YES ✓ (guaranteed)</td>
+                            <td class="no">NO ✗ (not guaranteed)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Memory Usage</strong></td>
+                            <td>HIGH (stores all nodes at current level)</td>
+                            <td>LOW (only stores current path)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Complete?</strong></td>
+                            <td class="yes">YES ✓ (always finds solution if exists)</td>
+                            <td class="no">MAYBE ⚠️ (can get stuck in infinite loops)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Best For</strong></td>
+                            <td>Finding nearest goal, social networks</td>
+                            <td>Puzzles, mazes, games, when memory is limited</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>💻 Complete Python Code</h2>
+
+                <div class="code-box">
+                    <div class="code-header">
+                        <span class="code-filename">bfs_complete.py</span>
+                        <button class="btn" onclick="copyCode('bfsFullCode')">Copy Code</button>
+                    </div>
+                    <div class="code-section-title">Complete BFS Implementation - Ready to Run!</div>
+                    <pre class="code-block" id="bfsFullCode"><span class="comment">"""
+=============================================================================
+BREADTH-FIRST SEARCH (BFS) - Complete Implementation
+=============================================================================
+Author: For FAST NUCES AI Lab
+Purpose: Find the SHORTEST path from start to goal
+
+HOW BFS WORKS (Simple Explanation):
+1. Start at the beginning
+2. Visit ALL neighbors first (level 1)
+3. Then visit neighbors of neighbors (level 2)
+4. Keep going level by level until you find the goal
+
+IMPORTANT FACTS:
+- Uses a QUEUE (First In, First Out)
+- ALWAYS finds shortest path (in terms of steps)
+- Uses MORE memory than DFS
+
+REAL WORLD USES:
+- Finding shortest route on a map
+- Social network "degrees of separation"
+- Web crawlers
+- Puzzle solving (like 8-puzzle)
+=============================================================================
+"""</span>
+
+<span class="keyword">from</span> collections <span class="keyword">import</span> deque  <span class="comment"># deque is a fast queue in Python</span>
+
+<span class="keyword">def</span> <span class="function">bfs</span>(graph, start, goal):
+    <span class="comment">"""
+    Find the shortest path from start to goal using BFS.
+    
+    Parameters:
+        graph: A dictionary where each key is a node and 
+               the value is a list of connected nodes (neighbors)
+        start: The starting node
+        goal: The node we want to reach
+    
+    Returns:
+        The path as a list of nodes, or None if no path exists
+    
+    Example:
+        graph = {'A': ['B', 'C'], 'B': ['D'], 'C': ['D'], 'D': []}
+        bfs(graph, 'A', 'D')  # Returns ['A', 'B', 'D'] or ['A', 'C', 'D']
+    """</span>
+    
+    <span class="comment"># ============ STEP 1: Setup ============</span>
+    <span class="comment"># Create a queue. Each item is (current_node, path_to_get_here)</span>
+    queue = deque()
+    queue.append( (start, [start]) )  <span class="comment"># Start with initial node</span>
+    
+    <span class="comment"># Keep track of visited nodes so we don't visit twice</span>
+    visited = <span class="builtin">set</span>()
+    visited.add(start)
+    
+    <span class="comment"># ============ STEP 2: Main Loop ============</span>
+    <span class="keyword">while</span> <span class="builtin">len</span>(queue) > <span class="number">0</span>:  <span class="comment"># While there are nodes to explore</span>
+        
+        <span class="comment"># Get the FIRST item from queue (FIFO)</span>
+        current_node, path = queue.popleft()
+        
+        <span class="comment"># ============ STEP 3: Goal Check ============</span>
+        <span class="keyword">if</span> current_node == goal:
+            <span class="keyword">return</span> path  <span class="comment"># Found it! Return the path</span>
+        
+        <span class="comment"># ============ STEP 4: Explore Neighbors ============</span>
+        <span class="comment"># Get all neighbors of current node</span>
+        neighbors = graph.get(current_node, [])
+        
+        <span class="keyword">for</span> neighbor <span class="keyword">in</span> neighbors:
+            <span class="keyword">if</span> neighbor <span class="keyword">not in</span> visited:
+                visited.add(neighbor)  <span class="comment"># Mark as visited</span>
+                new_path = path + [neighbor]  <span class="comment"># Create new path</span>
+                queue.append( (neighbor, new_path) )  <span class="comment"># Add to queue</span>
+    
+    <span class="comment"># ============ STEP 5: No Path Found ============</span>
+    <span class="keyword">return</span> <span class="keyword">None</span>
+
+
+<span class="comment"># ==================== TEST THE CODE ====================</span>
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    
+    <span class="comment"># Create a sample graph (like a map of cities)</span>
+    graph = {
+        <span class="string">'Peshawar'</span>: [<span class="string">'Islamabad'</span>, <span class="string">'Mardan'</span>],
+        <span class="string">'Islamabad'</span>: [<span class="string">'Peshawar'</span>, <span class="string">'Lahore'</span>, <span class="string">'Rawalpindi'</span>],
+        <span class="string">'Mardan'</span>: [<span class="string">'Peshawar'</span>, <span class="string">'Swabi'</span>],
+        <span class="string">'Lahore'</span>: [<span class="string">'Islamabad'</span>, <span class="string">'Multan'</span>],
+        <span class="string">'Rawalpindi'</span>: [<span class="string">'Islamabad'</span>],
+        <span class="string">'Swabi'</span>: [<span class="string">'Mardan'</span>],
+        <span class="string">'Multan'</span>: [<span class="string">'Lahore'</span>, <span class="string">'Karachi'</span>],
+        <span class="string">'Karachi'</span>: [<span class="string">'Multan'</span>]
+    }
+    
+    <span class="comment"># Find shortest path from Peshawar to Karachi</span>
+    start = <span class="string">'Peshawar'</span>
+    goal = <span class="string">'Karachi'</span>
+    
+    result = bfs(graph, start, goal)
+    
+    <span class="keyword">if</span> result:
+        <span class="builtin">print</span>(<span class="string">"✓ Path found!"</span>)
+        <span class="builtin">print</span>(<span class="string">"  Path:"</span>, <span class="string">" → "</span>.join(result))
+        <span class="builtin">print</span>(<span class="string">"  Steps:"</span>, <span class="builtin">len</span>(result) - <span class="number">1</span>)
+    <span class="keyword">else</span>:
+        <span class="builtin">print</span>(<span class="string">"✗ No path exists!"</span>)
+    
+    <span class="comment"># Expected Output:</span>
+    <span class="comment"># ✓ Path found!</span>
+    <span class="comment">#   Path: Peshawar → Islamabad → Lahore → Multan → Karachi</span>
+    <span class="comment">#   Steps: 4</span></pre>
+                </div>
+
+                <div class="code-box">
+                    <div class="code-header">
+                        <span class="code-filename">dfs_complete.py</span>
+                        <button class="btn" onclick="copyCode('dfsFullCode')">Copy Code</button>
+                    </div>
+                    <div class="code-section-title">Complete DFS Implementation - Ready to Run!</div>
+                    <pre class="code-block" id="dfsFullCode"><span class="comment">"""
+=============================================================================
+DEPTH-FIRST SEARCH (DFS) - Complete Implementation
+=============================================================================
+Author: For FAST NUCES AI Lab
+Purpose: Find A path from start to goal (not necessarily shortest!)
+
+HOW DFS WORKS (Simple Explanation):
+1. Start at the beginning
+2. Pick ONE path and go as deep as possible
+3. When you hit a dead end, BACKTRACK
+4. Try another path from the last junction
+5. Repeat until you find the goal
+
+IMPORTANT FACTS:
+- Uses a STACK (Last In, First Out)
+- Does NOT guarantee shortest path
+- Uses LESS memory than BFS
+
+REAL WORLD USES:
+- Solving mazes
+- Game AI (exploring game trees)
+- Detecting cycles in graphs
+- Topological sorting
+=============================================================================
+"""</span>
+
+<span class="keyword">def</span> <span class="function">dfs</span>(graph, start, goal):
+    <span class="comment">"""
+    Find a path from start to goal using DFS.
+    NOTE: This may NOT be the shortest path!
+    
+    Parameters:
+        graph: Dictionary of node -> list of neighbors
+        start: Starting node
+        goal: Target node
+    
+    Returns:
+        A path as a list, or None if no path exists
+    """</span>
+    
+    <span class="comment"># ============ STEP 1: Setup ============</span>
+    <span class="comment"># Create a stack (we use a list, adding/removing from end)</span>
+    stack = []
+    stack.append( (start, [start]) )  <span class="comment"># (node, path_to_node)</span>
+    
+    <span class="comment"># Keep track of visited nodes</span>
+    visited = <span class="builtin">set</span>()
+    
+    <span class="comment"># ============ STEP 2: Main Loop ============</span>
+    <span class="keyword">while</span> <span class="builtin">len</span>(stack) > <span class="number">0</span>:
+        
+        <span class="comment"># Get the LAST item from stack (LIFO)</span>
+        current_node, path = stack.pop()  <span class="comment"># pop() removes from END</span>
+        
+        <span class="comment"># Skip if already visited</span>
+        <span class="keyword">if</span> current_node <span class="keyword">in</span> visited:
+            <span class="keyword">continue</span>
+        visited.add(current_node)
+        
+        <span class="comment"># ============ STEP 3: Goal Check ============</span>
+        <span class="keyword">if</span> current_node == goal:
+            <span class="keyword">return</span> path
+        
+        <span class="comment"># ============ STEP 4: Add Neighbors to Stack ============</span>
+        neighbors = graph.get(current_node, [])
+        
+        <span class="keyword">for</span> neighbor <span class="keyword">in</span> neighbors:
+            <span class="keyword">if</span> neighbor <span class="keyword">not in</span> visited:
+                new_path = path + [neighbor]
+                stack.append( (neighbor, new_path) )
+    
+    <span class="comment"># ============ STEP 5: No Path Found ============</span>
+    <span class="keyword">return</span> <span class="keyword">None</span>
+
+
+<span class="comment"># ==================== BONUS: Recursive DFS ====================</span>
+<span class="keyword">def</span> <span class="function">dfs_recursive</span>(graph, current, goal, visited=<span class="keyword">None</span>, path=<span class="keyword">None</span>):
+    <span class="comment">"""
+    DFS using recursion - more elegant but uses more memory.
+    """</span>
+    <span class="keyword">if</span> visited <span class="keyword">is</span> <span class="keyword">None</span>:
+        visited = <span class="builtin">set</span>()
+    <span class="keyword">if</span> path <span class="keyword">is</span> <span class="keyword">None</span>:
+        path = []
+    
+    visited.add(current)
+    path = path + [current]
+    
+    <span class="keyword">if</span> current == goal:
+        <span class="keyword">return</span> path
+    
+    <span class="keyword">for</span> neighbor <span class="keyword">in</span> graph.get(current, []):
+        <span class="keyword">if</span> neighbor <span class="keyword">not in</span> visited:
+            result = dfs_recursive(graph, neighbor, goal, visited, path)
+            <span class="keyword">if</span> result:
+                <span class="keyword">return</span> result
+    
+    <span class="keyword">return</span> <span class="keyword">None</span>
+
+
+<span class="comment"># ==================== TEST THE CODE ====================</span>
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    
+    graph = {
+        <span class="string">'A'</span>: [<span class="string">'B'</span>, <span class="string">'C'</span>],
+        <span class="string">'B'</span>: [<span class="string">'A'</span>, <span class="string">'D'</span>, <span class="string">'E'</span>],
+        <span class="string">'C'</span>: [<span class="string">'A'</span>, <span class="string">'F'</span>],
+        <span class="string">'D'</span>: [<span class="string">'B'</span>],
+        <span class="string">'E'</span>: [<span class="string">'B'</span>, <span class="string">'F'</span>],
+        <span class="string">'F'</span>: [<span class="string">'C'</span>, <span class="string">'E'</span>]
+    }
+    
+    <span class="builtin">print</span>(<span class="string">"DFS (Iterative):"</span>, dfs(graph, <span class="string">'A'</span>, <span class="string">'F'</span>))
+    <span class="builtin">print</span>(<span class="string">"DFS (Recursive):"</span>, dfs_recursive(graph, <span class="string">'A'</span>, <span class="string">'F'</span>))
+    
+    <span class="comment"># Note: DFS might find A → B → E → F</span>
+    <span class="comment"># But shortest path is A → C → F (only 2 steps!)</span>
+    <span class="comment"># This shows DFS doesn't guarantee shortest path.</span></pre>
+                </div>
+
+                <div class="practice-box">
+                    <h4>Practice Activity: Trace the Algorithm</h4>
+                    <p>Given this graph:</p>
+                    <pre style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+    A ---- B ---- E
+    |      |      |
+    C ---- D ---- F
+                    </pre>
+                    <p><strong>Task 1:</strong> Starting from A, trace BFS to find F. Write down:</p>
+                    <ul>
+                        <li>The order nodes are explored</li>
+                        <li>The contents of the queue at each step</li>
+                        <li>The final path found</li>
+                    </ul>
+                    <p style="margin-top: 1rem;"><strong>Task 2:</strong> Do the same for DFS. Compare the paths found!</p>
+                    <p style="margin-top: 1rem;"><strong>Task 3:</strong> Run the Python code above with this graph and verify your answers.</p>
+                </div>
+
+                <div class="summary-box">
+                    <h4>📝 Lab 2 Summary</h4>
+                    <ul>
+                        <li><strong>BFS</strong> = Explores level by level, uses QUEUE (FIFO)</li>
+                        <li><strong>DFS</strong> = Goes deep first, uses STACK (LIFO)</li>
+                        <li><strong>BFS guarantees shortest path</strong> (in steps), DFS does not</li>
+                        <li><strong>DFS uses less memory</strong> than BFS</li>
+                        <li>The ONLY code difference: <code>queue.popleft()</code> vs <code>stack.pop()</code></li>
+                        <li>Choose BFS when you need shortest path, DFS when memory is limited</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Sections for Lab 3, 4, 5 continue in next part due to length... -->
+            
+            <!-- ==================== LAB 3: UCS ==================== -->
+            <section id="ucs" class="lab-section">
+                <div class="lab-header">
+                    <div class="lab-number">Lab 3</div>
+                    <h1 class="lab-title">Uniform Cost Search (UCS)</h1>
+                </div>
+
+                <div class="objectives-box">
+                    <h4>Lab Objectives</h4>
+                    <ul>
+                        <li>Understand weighted graphs (edges have different costs)</li>
+                        <li>Learn how UCS finds the CHEAPEST path, not just shortest</li>
+                        <li>Understand the difference between "shortest" and "cheapest"</li>
+                        <li>Implement UCS in Python using priority queues</li>
+                    </ul>
+                </div>
+
+                <h2>🤔 The Problem with BFS</h2>
+
+                <div class="simple-box">
+                    <div class="simple-box-title">BFS Has a Limitation</div>
+                    <p>BFS finds the path with <strong>fewest steps</strong>. But what if some steps are HARDER than others?</p>
+                    <ul>
+                        <li>Walking 1 km on a flat road = easy (low cost)</li>
+                        <li>Walking 1 km through thick mud = hard (high cost)</li>
+                        <li>Walking 1 km up a steep mountain = very hard (very high cost)</li>
+                    </ul>
+                    <p style="margin-top: 0.75rem;">BFS treats all steps equally - but that's not fair! We need an algorithm that considers the <strong>COST</strong> of each step.</p>
+                </div>
+
+                <div class="real-life-box">
+                    <p><strong>Google Maps Example:</strong></p>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>Route A: 3 roads, but heavy traffic → takes 60 minutes</li>
+                        <li>Route B: 7 roads, but no traffic → takes 25 minutes</li>
+                    </ul>
+                    <p style="margin-top: 0.75rem;">BFS would pick Route A (fewer roads = fewer steps). But Route B is actually FASTER! We need UCS to find the truly best route.</p>
+                </div>
+
+                <h2>💰 UCS: Uniform Cost Search</h2>
+
+                <div class="simple-box">
+                    <div class="simple-box-title">UCS in One Sentence</div>
+                    <p>UCS always expands the node with the <strong>LOWEST TOTAL COST</strong> so far. It's like always choosing the cheapest option at every step of your journey!</p>
+                </div>
+
+                <div class="key-point">
+                    <strong>The Magic Word: PRIORITY QUEUE</strong>
+                    <p>UCS uses a <strong>Priority Queue</strong>. Unlike a regular queue (first come first serve), a priority queue serves the one with the <strong>lowest cost first</strong>. It's like a hospital emergency room - the most critical patients are treated first, regardless of arrival time.</p>
+                </div>
+
+                <h3>How UCS Works - Step by Step</h3>
+
+                <ol class="steps-list">
+                    <li><strong>Start</strong> at the beginning node with total cost = 0.</li>
+                    <li><strong>Take out</strong> the node with the LOWEST total cost from the priority queue.</li>
+                    <li><strong>Check</strong> if this node is the goal. If YES, we have the cheapest path! 🎉</li>
+                    <li><strong>For each neighbor</strong>, calculate: new_cost = current_cost + edge_cost</li>
+                    <li><strong>Add neighbors</strong> to the priority queue with their total costs.</li>
+                    <li><strong>Repeat</strong> until you find the goal or the queue is empty.</li>
+                </ol>
+
+                <h3>UCS vs BFS Comparison</h3>
+
+                <div class="demo-box">
+                    <div class="demo-header">
+                        <span class="demo-title">💰 Watch UCS Avoid Expensive Paths</span>
+                        <div class="demo-controls">
+                            <button class="btn btn-primary" onclick="runUCSAnimation()">▶ Run Both</button>
+                            <button class="btn" onclick="resetUCS()">Reset</button>
+                        </div>
+                    </div>
+                    <div class="demo-content">
+                        <p style="text-align: center; color: var(--text-dim); margin-bottom: 1rem;">
+                            <strong>Cell colors show cost:</strong> Green = 1, Orange = 3, Red = 5. Watch how UCS finds a cheaper path!
+                        </p>
+                        <div class="legend">
+                            <div class="legend-item"><div class="legend-color" style="background: var(--start-color);"></div> Start</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--goal-color);"></div> Goal</div>
+                            <div class="legend-item"><div class="legend-color" style="background: #2e7d32;"></div> Cost: 1</div>
+                            <div class="legend-item"><div class="legend-color" style="background: #ef6c00;"></div> Cost: 3</div>
+                            <div class="legend-item"><div class="legend-color" style="background: #c62828;"></div> Cost: 5</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--path-color);"></div> Path</div>
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; margin-top: 1.5rem;">
+                            <div style="text-align: center;">
+                                <div style="color: var(--accent); margin-bottom: 0.75rem; font-weight: 700; font-size: 1.05rem;">BFS (ignores cost)</div>
+                                <div id="ucsBfsGrid" class="grid" style="grid-template-columns: repeat(8, 40px);"></div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="color: var(--accent-secondary); margin-bottom: 0.75rem; font-weight: 700; font-size: 1.05rem;">UCS (considers cost)</div>
+                                <div id="ucsGrid" class="grid" style="grid-template-columns: repeat(8, 40px);"></div>
+                            </div>
+                        </div>
+                        <div class="animation-status" id="ucsStatus">Click "Run Both" to compare BFS vs UCS. Watch how they find different paths!</div>
+                    </div>
+                    <div class="demo-stats">
+                        <div class="stat"><span class="stat-label">BFS Path Cost:</span> <span class="stat-value" id="bfsCost">-</span></div>
+                        <div class="stat"><span class="stat-label">UCS Path Cost:</span> <span class="stat-value" id="ucsCost">-</span></div>
+                        <div class="stat"><span class="stat-label">Cost Saved by UCS:</span> <span class="stat-value" id="ucsSaved">-</span></div>
+                    </div>
+                </div>
+
+                <h2>💻 Complete Python Code</h2>
+
+                <div class="code-box">
+                    <div class="code-header">
+                        <span class="code-filename">ucs_complete.py</span>
+                        <button class="btn" onclick="copyCode('ucsFullCode')">Copy Code</button>
+                    </div>
+                    <div class="code-section-title">Complete UCS Implementation - Ready to Run!</div>
+                    <pre class="code-block" id="ucsFullCode"><span class="comment">"""
+=============================================================================
+UNIFORM COST SEARCH (UCS) - Complete Implementation
+=============================================================================
+Author: For FAST NUCES AI Lab
+Purpose: Find the CHEAPEST path (lowest total cost) from start to goal
+
+HOW UCS WORKS (Simple Explanation):
+1. Start with cost = 0
+2. Always expand the node with LOWEST total cost
+3. For each neighbor: new_cost = current_cost + edge_cost
+4. Keep track of best cost to each node
+5. First time we reach goal = we have cheapest path!
+
+KEY DIFFERENCE FROM BFS:
+- BFS: Treats all edges as cost 1 (just counts steps)
+- UCS: Each edge can have different cost (finds cheapest path)
+
+REAL WORLD USES:
+- Google Maps finding fastest route (cost = time)
+- Network routing finding cheapest path (cost = bandwidth usage)
+- Game AI finding optimal path (cost = energy used)
+=============================================================================
+"""</span>
+
+<span class="keyword">import</span> heapq  <span class="comment"># Python's built-in priority queue</span>
+
+<span class="keyword">def</span> <span class="function">ucs</span>(graph, start, goal):
+    <span class="comment">"""
+    Find the CHEAPEST path from start to goal.
+    
+    Parameters:
+        graph: Dictionary where graph[node] = [(neighbor1, cost1), (neighbor2, cost2), ...]
+        start: Starting node
+        goal: Target node
+    
+    Returns:
+        Tuple of (total_cost, path) or (infinity, None) if no path
+    """</span>
+    
+    <span class="comment"># ============ STEP 1: Setup Priority Queue ============</span>
+    <span class="comment"># Priority queue entries: (total_cost, path)</span>
+    <span class="comment"># heapq always gives us the SMALLEST value first</span>
+    priority_queue = []
+    heapq.heappush(priority_queue, (<span class="number">0</span>, [start]))  <span class="comment"># (cost=0, path=[start])</span>
+    
+    <span class="comment"># Track best cost to reach each node</span>
+    best_cost = {start: <span class="number">0</span>}
+    
+    <span class="comment"># ============ STEP 2: Main Loop ============</span>
+    <span class="keyword">while</span> priority_queue:
+        
+        <span class="comment"># Get node with LOWEST cost</span>
+        current_cost, path = heapq.heappop(priority_queue)
+        current_node = path[-<span class="number">1</span>]  <span class="comment"># Last node in path</span>
+        
+        <span class="comment"># ============ STEP 3: Goal Check ============</span>
+        <span class="keyword">if</span> current_node == goal:
+            <span class="keyword">return</span> (current_cost, path)  <span class="comment"># Found cheapest path!</span>
+        
+        <span class="comment"># Skip if we already found a better path to this node</span>
+        <span class="keyword">if</span> current_cost > best_cost.get(current_node, <span class="builtin">float</span>(<span class="string">'inf'</span>)):
+            <span class="keyword">continue</span>
+        
+        <span class="comment"># ============ STEP 4: Explore Neighbors ============</span>
+        <span class="keyword">for</span> neighbor, edge_cost <span class="keyword">in</span> graph.get(current_node, []):
+            new_cost = current_cost + edge_cost
+            
+            <span class="comment"># Only add if this is a better path to neighbor</span>
+            <span class="keyword">if</span> new_cost < best_cost.get(neighbor, <span class="builtin">float</span>(<span class="string">'inf'</span>)):
+                best_cost[neighbor] = new_cost
+                new_path = path + [neighbor]
+                heapq.heappush(priority_queue, (new_cost, new_path))
+    
+    <span class="comment"># No path found</span>
+    <span class="keyword">return</span> (<span class="builtin">float</span>(<span class="string">'inf'</span>), <span class="keyword">None</span>)
+
+
+<span class="comment"># ==================== TEST THE CODE ====================</span>
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    
+    <span class="comment"># Weighted graph: each edge has a cost (travel time in hours)</span>
+    <span class="comment"># Format: 'City': [(neighbor, cost), ...]</span>
+    graph = {
+        <span class="string">'Peshawar'</span>: [(<span class="string">'Islamabad'</span>, <span class="number">2</span>), (<span class="string">'Mardan'</span>, <span class="number">1</span>)],
+        <span class="string">'Islamabad'</span>: [(<span class="string">'Peshawar'</span>, <span class="number">2</span>), (<span class="string">'Lahore'</span>, <span class="number">5</span>), (<span class="string">'Murree'</span>, <span class="number">1</span>)],
+        <span class="string">'Mardan'</span>: [(<span class="string">'Peshawar'</span>, <span class="number">1</span>), (<span class="string">'Swabi'</span>, <span class="number">1</span>)],
+        <span class="string">'Swabi'</span>: [(<span class="string">'Mardan'</span>, <span class="number">1</span>), (<span class="string">'Islamabad'</span>, <span class="number">2</span>)],
+        <span class="string">'Lahore'</span>: [(<span class="string">'Islamabad'</span>, <span class="number">5</span>), (<span class="string">'Multan'</span>, <span class="number">4</span>)],
+        <span class="string">'Murree'</span>: [(<span class="string">'Islamabad'</span>, <span class="number">1</span>)],
+        <span class="string">'Multan'</span>: [(<span class="string">'Lahore'</span>, <span class="number">4</span>), (<span class="string">'Karachi'</span>, <span class="number">8</span>)],
+        <span class="string">'Karachi'</span>: [(<span class="string">'Multan'</span>, <span class="number">8</span>)]
+    }
+    
+    cost, path = ucs(graph, <span class="string">'Peshawar'</span>, <span class="string">'Karachi'</span>)
+    
+    <span class="keyword">if</span> path:
+        <span class="builtin">print</span>(<span class="string">"✓ Cheapest path found!"</span>)
+        <span class="builtin">print</span>(<span class="string">"  Path:"</span>, <span class="string">" → "</span>.join(path))
+        <span class="builtin">print</span>(<span class="string">"  Total cost:"</span>, cost, <span class="string">"hours"</span>)
+    <span class="keyword">else</span>:
+        <span class="builtin">print</span>(<span class="string">"✗ No path exists!"</span>)
+    
+    <span class="comment"># Expected Output:</span>
+    <span class="comment"># ✓ Cheapest path found!</span>
+    <span class="comment">#   Path: Peshawar → Islamabad → Lahore → Multan → Karachi</span>
+    <span class="comment">#   Total cost: 19 hours</span></pre>
+                </div>
+
+                <div class="summary-box">
+                    <h4>📝 Lab 3 Summary</h4>
+                    <ul>
+                        <li><strong>BFS finds fewest STEPS</strong>, UCS finds lowest COST</li>
+                        <li>UCS uses a <strong>Priority Queue</strong> (cheapest first)</li>
+                        <li>UCS is essentially <strong>Dijkstra's algorithm</strong> with a single goal</li>
+                        <li>Use UCS when edges have different costs/weights</li>
+                        <li>UCS guarantees the optimal (cheapest) path!</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ==================== LAB 4: A* SEARCH ==================== -->
+            <section id="informed" class="lab-section">
+                <div class="lab-header">
+                    <div class="lab-number">Lab 4</div>
+                    <h1 class="lab-title">A* Search (Informed Search)</h1>
+                </div>
+
+                <div class="objectives-box">
+                    <h4>Lab Objectives</h4>
+                    <ul>
+                        <li>Understand what a "heuristic" is and why it's useful</li>
+                        <li>Master the A* formula: f(n) = g(n) + h(n)</li>
+                        <li>Learn common heuristics (Manhattan, Euclidean)</li>
+                        <li>Implement A* search in Python</li>
+                        <li>Understand when A* is better than BFS/UCS</li>
+                    </ul>
+                </div>
+
+                <h2>🤔 The Problem with Blind Search</h2>
+
+                <div class="simple-box">
+                    <div class="simple-box-title">Blind Search is Wasteful</div>
+                    <p>BFS, DFS, and UCS are all "blind" - they don't know WHERE the goal is. They explore in all directions equally.</p>
+                    <p style="margin-top: 0.75rem;">Imagine searching for Karachi on a map by checking EVERY city in Pakistan - that's wasteful! But if someone tells you "Karachi is in the SOUTH", you can focus your search there.</p>
+                    <p style="margin-top: 0.75rem;">That hint is called a <strong>HEURISTIC</strong>!</p>
+                </div>
+
+                <h2>🧭 What is a Heuristic?</h2>
+
+                <div class="definition">
+                    <div class="definition-term">Heuristic h(n)</div>
+                    <div class="definition-meaning">An ESTIMATE of the cost from node n to the goal. It's not the exact cost - just an educated guess. Like looking at a map and estimating "the goal seems about 5 km away."</div>
+                </div>
+
+                <div class="real-life-box">
+                    <p><strong>The "Hot and Cold" Game:</strong></p>
+                    <p style="margin-top: 0.5rem;">Remember playing "hot and cold" as a kid? Someone hides an object, and as you search, they say "warmer... warmer... cold... warmer... HOT!"</p>
+                    <p style="margin-top: 0.5rem;">That feedback is a <strong>heuristic</strong>! It tells you approximately how close you are to the goal. You use it to guide your search instead of checking randomly.</p>
+                </div>
+
+                <h3>Common Heuristics for Grid Problems</h3>
+
+                <div class="comparison-grid">
+                    <div class="compare-card">
+                        <h4 style="color: var(--accent);">📐 Manhattan Distance</h4>
+                        <p>Count horizontal + vertical distance only. Like walking in a city with blocks (you can't walk diagonally through buildings).</p>
+                        <p style="font-family: monospace; margin-top: 0.75rem; color: var(--accent); font-size: 1.1rem;">h = |x₁-x₂| + |y₁-y₂|</p>
+                        <p style="margin-top: 0.5rem; color: var(--text-muted);">Example: (0,0) to (3,4) = 3+4 = 7</p>
+                    </div>
+                    <div class="compare-card">
+                        <h4 style="color: var(--accent-secondary);">📏 Euclidean Distance</h4>
+                        <p>Straight line distance. Like a bird flying directly from one point to another (diagonal is allowed).</p>
+                        <p style="font-family: monospace; margin-top: 0.75rem; color: var(--accent-secondary); font-size: 1.1rem;">h = √[(x₁-x₂)² + (y₁-y₂)²]</p>
+                        <p style="margin-top: 0.5rem; color: var(--text-muted);">Example: (0,0) to (3,4) = √25 = 5</p>
+                    </div>
+                </div>
+
+                <h3>Interactive Heuristic Heatmap</h3>
+
+                <div class="demo-box">
+                    <div class="demo-header">
+                        <span class="demo-title">🌡️ Heuristic Values Visualization</span>
+                        <div class="heatmap-controls">
+                            <button class="heatmap-btn active" id="manhattanBtn" onclick="setHeuristic('manhattan')">Manhattan</button>
+                            <button class="heatmap-btn" id="euclideanBtn" onclick="setHeuristic('euclidean')">Euclidean</button>
+                        </div>
+                    </div>
+                    <div class="demo-content">
+                        <p style="text-align: center; color: var(--text-dim); margin-bottom: 1rem;">
+                            Numbers show estimated distance to goal (⭐). <strong>Blue = close, Red = far.</strong><br>
+                            <strong>Click any cell to move the goal!</strong>
+                        </p>
+                        <div class="grid-container">
+                            <div id="heatmapGrid" class="grid" style="grid-template-columns: repeat(8, 50px);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>⭐ The A* Formula</h2>
+
+                <div class="key-point" style="font-size: 1.1rem; text-align: center; padding: 2rem;">
+                    <strong style="font-size: 1.5rem; color: var(--accent);">f(n) = g(n) + h(n)</strong>
+                    <div style="margin-top: 1.5rem; text-align: left;">
+                        <p><span style="color: var(--accent); font-weight: 700;">f(n)</span> = Total estimated cost (what A* uses to decide which node to expand)</p>
+                        <p><span style="color: var(--success); font-weight: 700;">g(n)</span> = Actual cost from START to current node n (what we've already spent)</p>
+                        <p><span style="color: var(--accent-warning); font-weight: 700;">h(n)</span> = Estimated cost from node n to GOAL (our guess of what's left)</p>
+                    </div>
+                </div>
+
+                <div class="real-life-box">
+                    <p><strong>Trip Budget Analogy:</strong></p>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li><strong style="color: var(--success);">g(n)</strong> = Money already spent on the trip so far</li>
+                        <li><strong style="color: var(--accent-warning);">h(n)</strong> = Estimated money still needed to complete the trip</li>
+                        <li><strong style="color: var(--accent);">f(n)</strong> = Total estimated trip cost</li>
+                    </ul>
+                    <p style="margin-top: 0.75rem;">A* always picks the option with the <strong>lowest total estimated cost</strong>. It balances what you've spent with what you expect to spend!</p>
+                </div>
+
+                <h3>A* vs BFS - See the Difference!</h3>
+
+                <div class="demo-box">
+                    <div class="demo-header">
+                        <span class="demo-title">⭐ Watch A* Be Smarter Than BFS</span>
+                        <div class="demo-controls">
+                            <button class="btn btn-primary" onclick="runAStarAnimation()">▶ Run Both</button>
+                            <button class="btn" onclick="resetAStar()">Reset</button>
+                        </div>
+                    </div>
+                    <div class="demo-content">
+                        <p style="text-align: center; color: var(--text-dim); margin-bottom: 1rem;">
+                            A* uses heuristic to focus toward the goal. <strong>Watch how it explores FEWER nodes!</strong>
+                        </p>
+                        <div class="legend">
+                            <div class="legend-item"><div class="legend-color" style="background: var(--start-color);"></div> Start</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--goal-color);"></div> Goal</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--explored-color);"></div> Explored</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--path-color);"></div> Path</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--wall-color);"></div> Wall</div>
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; margin-top: 1.5rem;">
+                            <div style="text-align: center;">
+                                <div style="color: var(--accent); margin-bottom: 0.75rem; font-weight: 700; font-size: 1.05rem;">BFS (Blind - no heuristic)</div>
+                                <div id="astarBfsGrid" class="grid" style="grid-template-columns: repeat(12, 32px);"></div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="color: var(--accent-secondary); margin-bottom: 0.75rem; font-weight: 700; font-size: 1.05rem;">A* (Uses heuristic)</div>
+                                <div id="astarGrid" class="grid" style="grid-template-columns: repeat(12, 32px);"></div>
+                            </div>
+                        </div>
+                        <div class="animation-status" id="astarStatus">Click "Run Both" to watch A* vs BFS race! See how A* explores fewer nodes.</div>
+                    </div>
+                    <div class="demo-stats">
+                        <div class="stat"><span class="stat-label">BFS Explored:</span> <span class="stat-value" id="astarBfsExp">0</span></div>
+                        <div class="stat"><span class="stat-label">A* Explored:</span> <span class="stat-value" id="astarExp">0</span></div>
+                        <div class="stat"><span class="stat-label">Nodes Saved by A*:</span> <span class="stat-value" id="astarSaved">-</span></div>
+                    </div>
+                </div>
+
+                <h2>💻 Complete Python Code</h2>
+
+                <div class="code-box">
+                    <div class="code-header">
+                        <span class="code-filename">astar_complete.py</span>
+                        <button class="btn" onclick="copyCode('astarFullCode')">Copy Code</button>
+                    </div>
+                    <div class="code-section-title">Complete A* Implementation - Ready to Run!</div>
+                    <pre class="code-block" id="astarFullCode"><span class="comment">"""
+=============================================================================
+A* SEARCH ALGORITHM - Complete Implementation
+=============================================================================
+Author: For FAST NUCES AI Lab
+Purpose: Find the optimal path using heuristic guidance
+
+THE A* FORMULA:
+    f(n) = g(n) + h(n)
+    
+    f(n) = Total estimated cost (used to decide which node to expand)
+    g(n) = Actual cost from start to node n
+    h(n) = Estimated cost from node n to goal (heuristic)
+
+KEY INSIGHT:
+- If h(n) = 0, A* becomes UCS (no heuristic guidance)
+- If g(n) = 0, A* becomes Greedy Best-First (ignores actual cost)
+- A* balances both for optimal performance!
+
+ADMISSIBILITY:
+- Heuristic must NEVER overestimate the true cost
+- If h(n) says "5 steps left" but it's actually 8, that's OK (underestimate)
+- If h(n) says "10 steps left" but it's actually 6, that's BAD (overestimate)
+
+REAL WORLD USES:
+- Video game pathfinding
+- GPS navigation
+- Robot motion planning
+- Network routing
+=============================================================================
+"""</span>
+
+<span class="keyword">import</span> heapq
+<span class="keyword">import</span> math
+
+<span class="keyword">def</span> <span class="function">manhattan_distance</span>(pos1, pos2):
+    <span class="comment">"""Manhattan distance: |x1-x2| + |y1-y2|"""</span>
+    <span class="keyword">return</span> <span class="builtin">abs</span>(pos1[<span class="number">0</span>] - pos2[<span class="number">0</span>]) + <span class="builtin">abs</span>(pos1[<span class="number">1</span>] - pos2[<span class="number">1</span>])
+
+
+<span class="keyword">def</span> <span class="function">euclidean_distance</span>(pos1, pos2):
+    <span class="comment">"""Euclidean distance: straight line"""</span>
+    <span class="keyword">return</span> math.sqrt((pos1[<span class="number">0</span>]-pos2[<span class="number">0</span>])**<span class="number">2</span> + (pos1[<span class="number">1</span>]-pos2[<span class="number">1</span>])**<span class="number">2</span>)
+
+
+<span class="keyword">def</span> <span class="function">astar</span>(grid, start, goal, heuristic=manhattan_distance):
+    <span class="comment">"""
+    A* Search on a 2D grid.
+    
+    Parameters:
+        grid: 2D list where 0=walkable, 1=wall
+        start: (row, col) starting position
+        goal: (row, col) target position
+        heuristic: Function to estimate distance to goal
+    
+    Returns:
+        Path as list of positions, or None if no path
+    """</span>
+    
+    rows, cols = <span class="builtin">len</span>(grid), <span class="builtin">len</span>(grid[<span class="number">0</span>])
+    
+    <span class="comment"># Priority queue: (f_score, g_score, position, path)</span>
+    pq = []
+    start_h = heuristic(start, goal)
+    heapq.heappush(pq, (start_h, <span class="number">0</span>, start, [start]))
+    
+    <span class="comment"># Best g_score to reach each position</span>
+    g_scores = {start: <span class="number">0</span>}
+    
+    <span class="comment"># Directions: up, down, left, right</span>
+    directions = [(-<span class="number">1</span>,<span class="number">0</span>), (<span class="number">1</span>,<span class="number">0</span>), (<span class="number">0</span>,-<span class="number">1</span>), (<span class="number">0</span>,<span class="number">1</span>)]
+    
+    <span class="keyword">while</span> pq:
+        f, g, current, path = heapq.heappop(pq)
+        
+        <span class="comment"># Goal check</span>
+        <span class="keyword">if</span> current == goal:
+            <span class="keyword">return</span> path
+        
+        <span class="comment"># Skip if we found a better path already</span>
+        <span class="keyword">if</span> g > g_scores.get(current, <span class="builtin">float</span>(<span class="string">'inf'</span>)):
+            <span class="keyword">continue</span>
+        
+        <span class="comment"># Explore neighbors</span>
+        <span class="keyword">for</span> dr, dc <span class="keyword">in</span> directions:
+            nr, nc = current[<span class="number">0</span>] + dr, current[<span class="number">1</span>] + dc
+            neighbor = (nr, nc)
+            
+            <span class="comment"># Check bounds and walls</span>
+            <span class="keyword">if</span> <span class="number">0</span> <= nr < rows <span class="keyword">and</span> <span class="number">0</span> <= nc < cols <span class="keyword">and</span> grid[nr][nc] == <span class="number">0</span>:
+                new_g = g + <span class="number">1</span>
+                new_h = heuristic(neighbor, goal)
+                new_f = new_g + new_h  <span class="comment"># THE A* FORMULA!</span>
+                
+                <span class="keyword">if</span> new_g < g_scores.get(neighbor, <span class="builtin">float</span>(<span class="string">'inf'</span>)):
+                    g_scores[neighbor] = new_g
+                    heapq.heappush(pq, (new_f, new_g, neighbor, path + [neighbor]))
+    
+    <span class="keyword">return</span> <span class="keyword">None</span>
+
+
+<span class="comment"># ==================== TEST THE CODE ====================</span>
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    
+    <span class="comment"># Create a grid (0=open, 1=wall)</span>
+    grid = [
+        [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],
+        [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],
+        [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],
+        [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],
+        [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],
+        [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]
+    ]
+    
+    start = (<span class="number">0</span>, <span class="number">0</span>)
+    goal = (<span class="number">5</span>, <span class="number">7</span>)
+    
+    path = astar(grid, start, goal)
+    
+    <span class="keyword">if</span> path:
+        <span class="builtin">print</span>(<span class="string">"✓ Path found!"</span>)
+        <span class="builtin">print</span>(<span class="string">"  Length:"</span>, <span class="builtin">len</span>(path), <span class="string">"steps"</span>)
+        
+        <span class="comment"># Visualize</span>
+        <span class="builtin">print</span>(<span class="string">"\n  Grid (S=start, G=goal, *=path, #=wall):"</span>)
+        path_set = <span class="builtin">set</span>(path)
+        <span class="keyword">for</span> r <span class="keyword">in</span> <span class="builtin">range</span>(<span class="builtin">len</span>(grid)):
+            row_str = <span class="string">"  "</span>
+            <span class="keyword">for</span> c <span class="keyword">in</span> <span class="builtin">range</span>(<span class="builtin">len</span>(grid[<span class="number">0</span>])):
+                <span class="keyword">if</span> (r,c) == start: row_str += <span class="string">"S "</span>
+                <span class="keyword">elif</span> (r,c) == goal: row_str += <span class="string">"G "</span>
+                <span class="keyword">elif</span> (r,c) <span class="keyword">in</span> path_set: row_str += <span class="string">"* "</span>
+                <span class="keyword">elif</span> grid[r][c] == <span class="number">1</span>: row_str += <span class="string">"# "</span>
+                <span class="keyword">else</span>: row_str += <span class="string">". "</span>
+            <span class="builtin">print</span>(row_str)</pre>
+                </div>
+
+                <div class="summary-box">
+                    <h4>📝 Lab 4 Summary</h4>
+                    <ul>
+                        <li><strong>Heuristic h(n)</strong> = Estimated cost from n to goal</li>
+                        <li><strong>A* Formula: f(n) = g(n) + h(n)</strong></li>
+                        <li>g(n) = actual cost so far, h(n) = estimated remaining cost</li>
+                        <li>A* explores <strong>fewer nodes</strong> than blind search</li>
+                        <li>A* finds <strong>optimal path</strong> if heuristic never overestimates</li>
+                        <li>Common heuristics: Manhattan (city blocks), Euclidean (straight line)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ==================== LAB 5: PRACTICE ==================== -->
+            <section id="practice" class="lab-section">
+                <div class="lab-header">
+                    <div class="lab-number">Lab 5</div>
+                    <h1 class="lab-title">Practice & Real-World Applications</h1>
+                </div>
+
+                <div class="objectives-box">
+                    <h4>Lab Objectives</h4>
+                    <ul>
+                        <li>Compare all algorithms side by side</li>
+                        <li>Solve real-world problems using search algorithms</li>
+                        <li>Test your understanding with a quiz</li>
+                    </ul>
+                </div>
+
+                <h2>📊 Complete Algorithm Comparison</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Algorithm</th>
+                            <th>Data Structure</th>
+                            <th>Complete?</th>
+                            <th>Optimal?</th>
+                            <th>Time</th>
+                            <th>Space</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>BFS</strong></td>
+                            <td>Queue</td>
+                            <td class="yes">Yes</td>
+                            <td class="yes">Yes (steps)</td>
+                            <td>O(b^d)</td>
+                            <td>O(b^d)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DFS</strong></td>
+                            <td>Stack</td>
+                            <td class="no">No*</td>
+                            <td class="no">No</td>
+                            <td>O(b^m)</td>
+                            <td>O(bm)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>UCS</strong></td>
+                            <td>Priority Queue</td>
+                            <td class="yes">Yes</td>
+                            <td class="yes">Yes (cost)</td>
+                            <td>O(b^(C*/ε))</td>
+                            <td>O(b^(C*/ε))</td>
+                        </tr>
+                        <tr>
+                            <td><strong>A*</strong></td>
+                            <td>Priority Queue</td>
+                            <td class="yes">Yes</td>
+                            <td class="yes">Yes</td>
+                            <td>O(b^d)</td>
+                            <td>O(b^d)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p style="color: var(--text-muted); font-size: 0.9rem;">b = branching factor, d = depth of solution, m = maximum depth, C* = optimal cost, ε = minimum step cost</p>
+
+                <h2>📝 Knowledge Quiz</h2>
+
+                <div class="quiz-box">
+                    <div class="quiz-question">1. Which data structure does BFS use?</div>
+                    <div class="quiz-options" id="q1">
+                        <div class="quiz-option" onclick="checkAnswer(this, 'q1', true)">Queue (FIFO)</div>
+                        <div class="quiz-option" onclick="checkAnswer(this, 'q1', false)">Stack (LIFO)</div>
+                        <div class="quiz-option" onclick="checkAnswer(this, 'q1', false)">Priority Queue</div>
+                    </div>
+                    <div id="q1-feedback" style="margin-top: 0.5rem;"></div>
+                </div>
+
+                <div class="quiz-box">
+                    <div class="quiz-question">2. What does h(n) represent in A*?</div>
+                    <div class="quiz-options" id="q2">
+                        <div class="quiz-option" onclick="checkAnswer(this, 'q2', false)">Actual cost from start to n</div>
+                        <div class="quiz-option" onclick="checkAnswer(this, 'q2', true)">Estimated cost from n to goal</div>
+                        <div class="quiz-option" onclick="checkAnswer(this, 'q2', false)">Total path cost</div>
+                    </div>
+                    <div id="q2-feedback" style="margin-top: 0.5rem;"></div>
+                </div>
+
+                <div class="quiz-box">
+                    <div class="quiz-question">3. Which algorithm should you use to find the cheapest path when edges have different costs?</div>
+                    <div class="quiz-options" id="q3">
+                        <div class="quiz-option" onclick="checkAnswer(this, 'q3', false)">BFS</div>
+                        <div class="quiz-option" onclick="checkAnswer(this, 'q3', false)">DFS</div>
+                        <div class="quiz-option" onclick="checkAnswer(this, 'q3', true)">UCS or A*</div>
+                    </div>
+                    <div id="q3-feedback" style="margin-top: 0.5rem;"></div>
+                </div>
+
+                <div class="quiz-box">
+                    <div class="quiz-question">4. What are the 4 components of the PEAS framework?</div>
+                    <div class="quiz-options" id="q4">
+                        <div class="quiz-option" onclick="checkAnswer(this, 'q4', false)">Problem, Environment, Algorithm, Solution</div>
+                        <div class="quiz-option" onclick="checkAnswer(this, 'q4', true)">Performance, Environment, Actuators, Sensors</div>
+                        <div class="quiz-option" onclick="checkAnswer(this, 'q4', false)">Path, Edge, Agent, State</div>
+                    </div>
+                    <div id="q4-feedback" style="margin-top: 0.5rem;"></div>
+                </div>
+
+                <h2>🌍 Real-World Practice Problems</h2>
+
+                <div class="practice-box">
+                    <h4>Problem 1: Campus Navigation System</h4>
+                    <p>Design a navigation system for FAST Peshawar campus that helps students find the shortest path between buildings.</p>
+                    <ol>
+                        <li>Draw a graph of the campus with buildings as nodes</li>
+                        <li>Estimate walking times between buildings (edge weights)</li>
+                        <li>Implement BFS to find the path with fewest buildings to pass</li>
+                        <li>Implement UCS to find the fastest walking path</li>
+                        <li>Compare the results - are they different?</li>
+                    </ol>
+                </div>
+
+                <div class="practice-box">
+                    <h4>Problem 2: Ride-Sharing Route Optimization</h4>
+                    <p>A ride-sharing app needs to pick up 3 passengers. Design an algorithm to find the best pickup order.</p>
+                    <ol>
+                        <li>Define the state space (driver location + which passengers are picked up)</li>
+                        <li>Define actions (go to passenger X, go to destination)</li>
+                        <li>Use A* with a heuristic based on distances</li>
+                        <li>What heuristic would you use? Is it admissible?</li>
+                    </ol>
+                </div>
+
+                <div class="practice-box">
+                    <h4>Problem 3: 8-Puzzle Solver</h4>
+                    <p>The 8-puzzle is a sliding puzzle. Implement an AI to solve it!</p>
+                    <pre style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin: 1rem 0; color: #e0f2f1;">
+    Initial:        Goal:
+    +---+---+---+   +---+---+---+
+    | 1 | 2 | 3 |   | 1 | 2 | 3 |
+    +---+---+---+   +---+---+---+
+    | 4 |   | 5 |   | 4 | 5 | 6 |
+    +---+---+---+   +---+---+---+
+    | 7 | 8 | 6 |   | 7 | 8 |   |
+    +---+---+---+   +---+---+---+
+                    </pre>
+                    <ol>
+                        <li>Define state as the configuration of tiles</li>
+                        <li>Actions: slide a tile into the empty space</li>
+                        <li>Use A* with Manhattan distance as heuristic</li>
+                        <li>Count how many nodes are explored - compare with BFS!</li>
+                    </ol>
+                </div>
+
+                <div class="summary-box">
+                    <h4>🎓 Course Complete! Final Summary</h4>
+                    <ul>
+                        <li><strong>Agent</strong> = Sense + Think + Act (4 types: Reflex → Model → Goal → Utility)</li>
+                        <li><strong>PEAS</strong> = Framework to describe any agent completely</li>
+                        <li><strong>BFS</strong> = Level by level, QUEUE, shortest path in steps</li>
+                        <li><strong>DFS</strong> = Deep first, STACK, uses less memory</li>
+                        <li><strong>UCS</strong> = Priority Queue, finds cheapest path by cost</li>
+                        <li><strong>A*</strong> = f(n) = g(n) + h(n), uses heuristic for efficiency</li>
+                        <li><strong>Heuristic</strong> = Educated guess, must not overestimate!</li>
+                    </ul>
+                    <p style="margin-top: 1rem; color: #9fa8da; text-align: center; font-size: 1.1rem;">
+                        <strong>Congratulations on completing the AI Lab Manual! 🎉</strong>
+                    </p>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== FOOTER ==================== -->
+        <footer class="manual-footer">
+            <p style="font-size: 1.1rem; color: var(--text-dim);">AI Lab Manual</p>
+            <p>FAST National University - Peshawar Campus</p>
+            <p>Prepared by <strong>Hamza Raziq Khan</strong></p>
+            <p style="margin-top: 0.5rem;">Department of Computer Science</p>
+        </footer>
+    </div>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Print Manual</button>
+
+    <script>
+        // ==================== NAVIGATION ====================
+        function showLab(labId) {
+            document.querySelectorAll('.lab-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(labId).classList.add('active');
+            event.target.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            setTimeout(() => {
+                if (labId === 'bfs-dfs') { initBFS(); initDFS(); }
+                if (labId === 'ucs') initUCS();
+                if (labId === 'informed') { initHeatmap(); initAStar(); }
+                if (labId === 'agents') initPEAS();
+            }, 100);
+        }
+
+        // ==================== AGENTS ====================
+        const agentExplanations = {
+            1: `<strong>⚡ Simple Reflex Agent</strong><br><br>
+                <strong>How it works:</strong> Only looks at the CURRENT situation. No memory of the past!<br><br>
+                <strong>Example:</strong> A thermostat. It only knows the current temperature. Cold? Turn heat on. Hot? Turn heat off. It doesn't remember that it was cold 5 minutes ago.<br><br>
+                <strong>Limitation:</strong> Can't handle situations that require memory or planning.`,
+            2: `<strong>🧠 Model-Based Reflex Agent</strong><br><br>
+                <strong>How it works:</strong> Has MEMORY! Keeps an internal model of the world that it updates.<br><br>
+                <strong>Example:</strong> A vacuum cleaner robot that remembers which rooms it has already cleaned. It won't clean the same room twice!<br><br>
+                <strong>Advantage:</strong> Can handle partially observable environments.`,
+            3: `<strong>🎯 Goal-Based Agent</strong><br><br>
+                <strong>How it works:</strong> Has a specific GOAL it wants to achieve. Makes decisions based on what gets it closer to the goal.<br><br>
+                <strong>Example:</strong> GPS navigation. It has a goal (your destination) and chooses roads that lead toward it.<br><br>
+                <strong>Advantage:</strong> Can plan ahead to achieve complex goals.`,
+            4: `<strong>⚖️ Utility-Based Agent</strong><br><br>
+                <strong>How it works:</strong> Not just reaching the goal, but reaching it in the BEST way. Has preferences and measures "happiness" with each choice.<br><br>
+                <strong>Example:</strong> GPS that can find "fastest route" OR "shortest route" OR "scenic route" based on your preference.<br><br>
+                <strong>Advantage:</strong> Can make trade-offs between conflicting goals.`
+        };
+        
+        function selectAgentType(card, type) {
+            document.querySelectorAll('.agent-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            const exp = document.getElementById('agentExplanation');
+            exp.style.display = 'block';
+            exp.innerHTML = agentExplanations[type];
+        }
+
+        // ==================== PEAS EXERCISE ====================
+        const peasData = [
+            { text: 'Clean floor', correct: 'P' },
+            { text: 'Low battery use', correct: 'P' },
+            { text: 'Room layout', correct: 'E' },
+            { text: 'Furniture', correct: 'E' },
+            { text: 'Dust and dirt', correct: 'E' },
+            { text: 'Wheels', correct: 'A' },
+            { text: 'Suction motor', correct: 'A' },
+            { text: 'Brushes', correct: 'A' },
+            { text: 'Dirt sensor', correct: 'S' },
+            { text: 'Bump sensor', correct: 'S' },
+            { text: 'Camera', correct: 'S' }
+        ];
+        
+        function initPEAS() {
+            const bank = document.getElementById('peasItemsBank');
+            if (!bank) return;
+            bank.innerHTML = '';
+            ['P', 'E', 'A', 'S'].forEach(cat => {
+                const items = document.querySelector(`#peas-${cat} .peas-items`);
+                if (items) items.innerHTML = '';
+            });
+            
+            [...peasData].sort(() => Math.random() - 0.5).forEach((item, i) => {
+                const div = document.createElement('div');
+                div.className = 'peas-item';
+                div.textContent = item.text;
+                div.draggable = true;
+                div.dataset.correct = item.correct;
+                div.dataset.id = i;
+                div.ondragstart = (e) => e.dataTransfer.setData('text', i);
+                bank.appendChild(div);
+            });
+            document.getElementById('peasResult').innerHTML = '';
+        }
+        
+        function allowDrop(e) { e.preventDefault(); }
+        
+        function dropItem(e, category) {
+            e.preventDefault();
+            const id = e.dataTransfer.getData('text');
+            const item = document.querySelector(`[data-id="${id}"]`);
+            if (!item) return;
+            
+            const items = document.querySelector(`#peas-${category} .peas-items`);
+            items.appendChild(item);
+            
+            item.classList.remove('correct', 'incorrect');
+            item.classList.add(item.dataset.correct === category ? 'correct' : 'incorrect');
+            
+            checkPEASComplete();
+        }
+        
+        function checkPEASComplete() {
+            const bank = document.getElementById('peasItemsBank');
+            if (bank && bank.children.length === 0) {
+                const correct = document.querySelectorAll('.peas-item.correct').length;
+                document.getElementById('peasResult').innerHTML = correct === peasData.length ?
+                    '<span style="color: var(--success);">✓ Perfect! All items correctly categorized!</span>' :
+                    `<span style="color: var(--accent-warning);">${correct}/${peasData.length} correct. Review the incorrect items (red border).</span>`;
+            }
+        }
+        
+        function resetPEAS() { initPEAS(); }
+
+        // ==================== GRID UTILITIES ====================
+        function createMaze(rows, cols, walls) {
+            const maze = [];
+            for (let r = 0; r < rows; r++) {
+                maze[r] = [];
+                for (let c = 0; c < cols; c++) {
+                    maze[r][c] = walls.some(w => w[0] === r && w[1] === c) ? 1 : 0;
+                }
+            }
+            return maze;
+        }
+
+        function getNeighbors(maze, r, c) {
+            const neighbors = [];
+            [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dr, dc]) => {
+                const nr = r + dr, nc = c + dc;
+                if (nr >= 0 && nr < maze.length && nc >= 0 && nc < maze[0].length && maze[nr][nc] !== 1) {
+                    neighbors.push({r: nr, c: nc});
+                }
+            });
+            return neighbors;
+        }
+
+        function renderGrid(gridId, maze, start, goal, explored, frontier, path, current = null) {
+            const grid = document.getElementById(gridId);
+            if (!grid) return;
+            grid.innerHTML = '';
+            
+            for (let r = 0; r < maze.length; r++) {
+                for (let c = 0; c < maze[0].length; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    const key = `${r},${c}`;
+                    
+                    if (current && current.r === r && current.c === c) cell.classList.add('current');
+                    else if (maze[r][c] === 1) cell.classList.add('wall');
+                    else if (r === start[0] && c === start[1]) { cell.classList.add('start'); cell.textContent = 'S'; }
+                    else if (r === goal[0] && c === goal[1]) { cell.classList.add('goal'); cell.textContent = 'G'; }
+                    else if (path?.has(key)) cell.classList.add('path');
+                    else if (explored?.has(key)) cell.classList.add('explored');
+                    else if (frontier?.some(n => `${n.r},${n.c}` === key)) cell.classList.add('frontier');
+                    
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        // ==================== BFS ====================
+        let bfsState, bfsInterval;
+        
+        function initBFS() {
+            const walls = [[1,2],[1,3],[2,5],[3,1],[3,2],[3,5],[3,6],[4,4],[5,2],[6,4],[6,5],[6,6]];
+            bfsState = { maze: createMaze(8, 10, walls), start: [0, 0], goal: [7, 9], frontier: [{r: 0, c: 0, parent: null}], explored: new Set(), path: null, running: false };
+            renderGrid('bfsGrid', bfsState.maze, bfsState.start, bfsState.goal, bfsState.explored, bfsState.frontier, null);
+            document.getElementById('bfsExplored').textContent = '0';
+            document.getElementById('bfsQueue').textContent = '1';
+            document.getElementById('bfsPathLen').textContent = '-';
+            document.getElementById('bfsStatus').textContent = 'Click "Play" to watch BFS explore level by level!';
+            document.getElementById('bfsStatus').className = 'animation-status';
+        }
+
+        function stepBFS() {
+            if (!bfsState || bfsState.path || bfsState.frontier.length === 0) return false;
+            const current = bfsState.frontier.shift();
+            const key = `${current.r},${current.c}`;
+            if (bfsState.explored.has(key)) return stepBFS();
+            bfsState.explored.add(key);
+            renderGrid('bfsGrid', bfsState.maze, bfsState.start, bfsState.goal, bfsState.explored, bfsState.frontier, null, current);
+            
+            if (current.r === bfsState.goal[0] && current.c === bfsState.goal[1]) {
+                bfsState.path = new Set();
+                let node = current;
+                while (node) { bfsState.path.add(`${node.r},${node.c}`); node = node.parent; }
+                renderGrid('bfsGrid', bfsState.maze, bfsState.start, bfsState.goal, bfsState.explored, [], bfsState.path);
+                document.getElementById('bfsPathLen').textContent = bfsState.path.size;
+                document.getElementById('bfsStatus').textContent = '✓ Goal found! Shortest path highlighted in purple.';
+                document.getElementById('bfsStatus').className = 'animation-status status-complete';
+                return false;
+            }
+            
+            getNeighbors(bfsState.maze, current.r, current.c).forEach(n => {
+                if (!bfsState.explored.has(`${n.r},${n.c}`)) bfsState.frontier.push({...n, parent: current});
+            });
+            document.getElementById('bfsExplored').textContent = bfsState.explored.size;
+            document.getElementById('bfsQueue').textContent = bfsState.frontier.length;
+            document.getElementById('bfsStatus').textContent = `Exploring level by level... Queue: ${bfsState.frontier.length} nodes`;
+            document.getElementById('bfsStatus').className = 'animation-status status-running';
+            return true;
+        }
+
+        function runBFS() {
+            if (bfsState?.running) { bfsState.running = false; clearInterval(bfsInterval); return; }
+            if (bfsState?.path) resetBFS();
+            bfsState.running = true;
+            const speed = 850 - document.getElementById('bfsSpeed').value;
+            bfsInterval = setInterval(() => { if (!stepBFS()) { clearInterval(bfsInterval); bfsState.running = false; } }, speed);
+        }
+
+        function resetBFS() { clearInterval(bfsInterval); initBFS(); }
+
+        // ==================== DFS ====================
+        let dfsState, dfsInterval;
+        
+        function initDFS() {
+            const walls = [[1,2],[1,3],[2,5],[3,1],[3,2],[3,5],[3,6],[4,4],[5,2],[6,4],[6,5],[6,6]];
+            dfsState = { maze: createMaze(8, 10, walls), start: [0, 0], goal: [7, 9], frontier: [{r: 0, c: 0, parent: null}], explored: new Set(), path: null, running: false };
+            renderGrid('dfsGrid', dfsState.maze, dfsState.start, dfsState.goal, dfsState.explored, dfsState.frontier, null);
+            document.getElementById('dfsExplored').textContent = '0';
+            document.getElementById('dfsStack').textContent = '1';
+            document.getElementById('dfsPathLen').textContent = '-';
+            document.getElementById('dfsStatus').textContent = 'Click "Play" to watch DFS go deep before backtracking!';
+        }
+
+        function stepDFS() {
+            if (!dfsState || dfsState.path || dfsState.frontier.length === 0) return false;
+            const current = dfsState.frontier.pop();
+            const key = `${current.r},${current.c}`;
+            if (dfsState.explored.has(key)) return stepDFS();
+            dfsState.explored.add(key);
+            renderGrid('dfsGrid', dfsState.maze, dfsState.start, dfsState.goal, dfsState.explored, dfsState.frontier, null, current);
+            
+            if (current.r === dfsState.goal[0] && current.c === dfsState.goal[1]) {
+                dfsState.path = new Set();
+                let node = current;
+                while (node) { dfsState.path.add(`${node.r},${node.c}`); node = node.parent; }
+                renderGrid('dfsGrid', dfsState.maze, dfsState.start, dfsState.goal, dfsState.explored, [], dfsState.path);
+                document.getElementById('dfsPathLen').textContent = dfsState.path.size;
+                document.getElementById('dfsStatus').textContent = '✓ Goal found! Note: This may NOT be the shortest path.';
+                document.getElementById('dfsStatus').className = 'animation-status status-complete';
+                return false;
+            }
+            
+            getNeighbors(dfsState.maze, current.r, current.c).forEach(n => {
+                if (!dfsState.explored.has(`${n.r},${n.c}`)) dfsState.frontier.push({...n, parent: current});
+            });
+            document.getElementById('dfsExplored').textContent = dfsState.explored.size;
+            document.getElementById('dfsStack').textContent = dfsState.frontier.length;
+            document.getElementById('dfsStatus').textContent = `Going deep... Stack depth: ${dfsState.frontier.length}`;
+            document.getElementById('dfsStatus').className = 'animation-status status-running';
+            return true;
+        }
+
+        function runDFS() {
+            if (dfsState?.running) { dfsState.running = false; clearInterval(dfsInterval); return; }
+            if (dfsState?.path) resetDFS();
+            dfsState.running = true;
+            dfsInterval = setInterval(() => { if (!stepDFS()) { clearInterval(dfsInterval); dfsState.running = false; } }, 200);
+        }
+
+        function resetDFS() { clearInterval(dfsInterval); initDFS(); }
+
+        // ==================== UCS ====================
+        let ucsData, ucsInterval;
+        
+        function initUCS() {
+            ucsData = { costs: [[1,1,1,5,5,5,1,1],[1,1,1,5,5,5,1,1],[1,1,1,1,1,1,5,1],[1,1,1,1,1,1,5,1],[5,5,1,1,1,1,1,1],[5,5,1,1,1,1,1,1]], start: [0, 0], goal: [5, 7] };
+            renderCostGrid('ucsBfsGrid', ucsData.costs, ucsData.start, ucsData.goal, null, null);
+            renderCostGrid('ucsGrid', ucsData.costs, ucsData.start, ucsData.goal, null, null);
+            ['bfsCost', 'ucsCost', 'ucsSaved'].forEach(id => document.getElementById(id).textContent = '-');
+            document.getElementById('ucsStatus').textContent = 'Click "Run Both" to compare. Watch how UCS avoids expensive (red) cells!';
+        }
+
+        function renderCostGrid(gridId, costs, start, goal, explored, path) {
+            const grid = document.getElementById(gridId);
+            if (!grid) return;
+            grid.innerHTML = '';
+            for (let r = 0; r < costs.length; r++) {
+                for (let c = 0; c < costs[0].length; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.style.width = '40px';
+                    cell.style.height = '40px';
+                    const key = `${r},${c}`;
+                    const cost = costs[r][c];
+                    if (r === start[0] && c === start[1]) { cell.classList.add('start'); cell.textContent = 'S'; }
+                    else if (r === goal[0] && c === goal[1]) { cell.classList.add('goal'); cell.textContent = 'G'; }
+                    else if (path?.has(key)) cell.classList.add('path');
+                    else if (explored?.has(key)) cell.classList.add('explored');
+                    else { cell.classList.add('cost-' + cost); cell.textContent = cost; }
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function runSearchAlgo(type, costs, start, goal) {
+            const frontier = [{r: start[0], c: start[1], cost: 0, parent: null}];
+            const explored = new Set();
+            const costMap = { [`${start[0]},${start[1]}`]: 0 };
+            while (frontier.length > 0) {
+                if (type === 'ucs') frontier.sort((a, b) => a.cost - b.cost);
+                const current = frontier.shift();
+                const key = `${current.r},${current.c}`;
+                if (explored.has(key)) continue;
+                explored.add(key);
+                if (current.r === goal[0] && current.c === goal[1]) {
+                    const path = new Set();
+                    let node = current;
+                    while (node) { path.add(`${node.r},${node.c}`); node = node.parent; }
+                    return { path, explored, cost: current.cost };
+                }
+                [[0,1],[0,-1],[1,0],[-1,0]].forEach(([dr, dc]) => {
+                    const nr = current.r + dr, nc = current.c + dc;
+                    if (nr >= 0 && nr < costs.length && nc >= 0 && nc < costs[0].length) {
+                        const nKey = `${nr},${nc}`;
+                        const newCost = current.cost + costs[nr][nc];
+                        if (!explored.has(nKey) && (!costMap[nKey] || newCost < costMap[nKey])) {
+                            costMap[nKey] = newCost;
+                            frontier.push({r: nr, c: nc, cost: newCost, parent: current});
+                        }
+                    }
+                });
+            }
+            return { path: new Set(), explored, cost: Infinity };
+        }
+
+        function runUCSAnimation() {
+            document.getElementById('ucsStatus').textContent = 'Running comparison...';
+            document.getElementById('ucsStatus').className = 'animation-status status-running';
+            
+            setTimeout(() => {
+                const bfsResult = runSearchAlgo('bfs', ucsData.costs, ucsData.start, ucsData.goal);
+                const ucsResult = runSearchAlgo('ucs', ucsData.costs, ucsData.start, ucsData.goal);
+                renderCostGrid('ucsBfsGrid', ucsData.costs, ucsData.start, ucsData.goal, bfsResult.explored, bfsResult.path);
+                renderCostGrid('ucsGrid', ucsData.costs, ucsData.start, ucsData.goal, ucsResult.explored, ucsResult.path);
+                document.getElementById('bfsCost').textContent = bfsResult.cost;
+                document.getElementById('ucsCost').textContent = ucsResult.cost;
+                document.getElementById('ucsSaved').textContent = bfsResult.cost - ucsResult.cost;
+                document.getElementById('ucsStatus').textContent = `✓ Complete! UCS saved ${bfsResult.cost - ucsResult.cost} cost units!`;
+                document.getElementById('ucsStatus').className = 'animation-status status-complete';
+            }, 500);
+        }
+
+        function resetUCS() { initUCS(); }
+
+        // ==================== HEATMAP ====================
+        let heuristicType = 'manhattan';
+        let heatmapGoal = [7, 7];
+        
+        function initHeatmap() { renderHeatmap(); }
+
+        function setHeuristic(type) {
+            heuristicType = type;
+            document.getElementById('manhattanBtn').classList.toggle('active', type === 'manhattan');
+            document.getElementById('euclideanBtn').classList.toggle('active', type === 'euclidean');
+            renderHeatmap();
+        }
+
+        function calcH(r, c) {
+            if (heuristicType === 'manhattan') return Math.abs(r - heatmapGoal[0]) + Math.abs(c - heatmapGoal[1]);
+            return Math.sqrt(Math.pow(r - heatmapGoal[0], 2) + Math.pow(c - heatmapGoal[1], 2));
+        }
+
+        function renderHeatmap() {
+            const grid = document.getElementById('heatmapGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.style.width = '50px';
+                    cell.style.height = '50px';
+                    cell.style.cursor = 'pointer';
+                    if (r === heatmapGoal[0] && c === heatmapGoal[1]) {
+                        cell.innerHTML = '<span style="font-size: 1.5rem;">⭐</span>';
+                        cell.style.background = 'var(--goal-color)';
+                    } else {
+                        const h = calcH(r, c);
+                        cell.innerHTML = `<span style="font-size: 0.9rem; font-weight: 600;">${h.toFixed(1)}</span>`;
+                        const ratio = Math.min(h / 12, 1);
+                        cell.style.background = `hsl(${(1 - ratio) * 200}, 65%, 40%)`;
+                    }
+                    cell.onclick = () => { heatmapGoal = [r, c]; renderHeatmap(); };
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        // ==================== A* ====================
+        let astarInterval;
+        
+        function initAStar() {
+            const walls = [[1,4],[1,5],[2,4],[2,5],[3,4],[3,5],[4,4],[4,5],[5,4],[5,5],[5,6],[5,7]];
+            const maze = createMaze(8, 12, walls);
+            renderGrid('astarBfsGrid', maze, [0,0], [7,11], new Set(), [], null);
+            renderGrid('astarGrid', maze, [0,0], [7,11], new Set(), [], null);
+            ['astarBfsExp', 'astarExp'].forEach(id => document.getElementById(id).textContent = '0');
+            document.getElementById('astarSaved').textContent = '-';
+            document.getElementById('astarStatus').textContent = 'Click "Run Both" to watch A* vs BFS. See how A* explores fewer nodes!';
+        }
+
+        function runAStarAnimation() {
+            const walls = [[1,4],[1,5],[2,4],[2,5],[3,4],[3,5],[4,4],[4,5],[5,4],[5,5],[5,6],[5,7]];
+            const maze = createMaze(8, 12, walls);
+            const start = [0, 0], goal = [7, 11];
+            
+            document.getElementById('astarStatus').textContent = 'Running comparison...';
+            document.getElementById('astarStatus').className = 'animation-status status-running';
+            
+            const bfsSteps = [], astarSteps = [];
+            
+            // BFS
+            let bfsFrontier = [{r: start[0], c: start[1], parent: null}];
+            let bfsExplored = new Set();
+            let bfsPath = null;
+            while (bfsFrontier.length > 0 && !bfsPath) {
+                const current = bfsFrontier.shift();
+                const key = `${current.r},${current.c}`;
+                if (bfsExplored.has(key)) continue;
+                bfsExplored.add(key);
+                bfsSteps.push(new Set(bfsExplored));
+                if (current.r === goal[0] && current.c === goal[1]) {
+                    bfsPath = new Set();
+                    let node = current;
+                    while (node) { bfsPath.add(`${node.r},${node.c}`); node = node.parent; }
+                } else {
+                    getNeighbors(maze, current.r, current.c).forEach(n => {
+                        if (!bfsExplored.has(`${n.r},${n.c}`)) bfsFrontier.push({...n, parent: current});
+                    });
+                }
+            }
+            
+            // A*
+            let astarFrontier = [{r: start[0], c: start[1], g: 0, parent: null}];
+            let astarExplored = new Set();
+            let astarPath = null;
+            let gCosts = { [`${start[0]},${start[1]}`]: 0 };
+            while (astarFrontier.length > 0 && !astarPath) {
+                astarFrontier.sort((a, b) => {
+                    const fA = a.g + Math.abs(a.r - goal[0]) + Math.abs(a.c - goal[1]);
+                    const fB = b.g + Math.abs(b.r - goal[0]) + Math.abs(b.c - goal[1]);
+                    return fA - fB;
+                });
+                const current = astarFrontier.shift();
+                const key = `${current.r},${current.c}`;
+                if (astarExplored.has(key)) continue;
+                astarExplored.add(key);
+                astarSteps.push(new Set(astarExplored));
+                if (current.r === goal[0] && current.c === goal[1]) {
+                    astarPath = new Set();
+                    let node = current;
+                    while (node) { astarPath.add(`${node.r},${node.c}`); node = node.parent; }
+                } else {
+                    getNeighbors(maze, current.r, current.c).forEach(n => {
+                        const nKey = `${n.r},${n.c}`;
+                        const newG = current.g + 1;
+                        if (!astarExplored.has(nKey) && (!gCosts[nKey] || newG < gCosts[nKey])) {
+                            gCosts[nKey] = newG;
+                            astarFrontier.push({...n, g: newG, parent: current});
+                        }
+                    });
+                }
+            }
+            
+            // Animate
+            let step = 0;
+            const maxSteps = Math.max(bfsSteps.length, astarSteps.length);
+            clearInterval(astarInterval);
+            astarInterval = setInterval(() => {
+                if (step < bfsSteps.length) {
+                    renderGrid('astarBfsGrid', maze, start, goal, bfsSteps[step], [], null);
+                    document.getElementById('astarBfsExp').textContent = bfsSteps[step].size;
+                }
+                if (step < astarSteps.length) {
+                    renderGrid('astarGrid', maze, start, goal, astarSteps[step], [], null);
+                    document.getElementById('astarExp').textContent = astarSteps[step].size;
+                }
+                step++;
+                if (step >= maxSteps) {
+                    clearInterval(astarInterval);
+                    renderGrid('astarBfsGrid', maze, start, goal, bfsExplored, [], bfsPath);
+                    renderGrid('astarGrid', maze, start, goal, astarExplored, [], astarPath);
+                    const saved = bfsExplored.size - astarExplored.size;
+                    document.getElementById('astarSaved').textContent = saved;
+                    document.getElementById('astarStatus').textContent = `✓ Complete! A* explored ${saved} fewer nodes than BFS!`;
+                    document.getElementById('astarStatus').className = 'animation-status status-complete';
+                }
+            }, 80);
+        }
+
+        function resetAStar() { clearInterval(astarInterval); initAStar(); }
+
+        // ==================== QUIZ ====================
+        function checkAnswer(el, qId, correct) {
+            document.querySelectorAll(`#${qId} .quiz-option`).forEach(o => o.classList.remove('correct', 'wrong'));
+            el.classList.add(correct ? 'correct' : 'wrong');
+            document.getElementById(`${qId}-feedback`).innerHTML = correct ?
+                '<span style="color: var(--success); font-weight: 600;">✓ Correct!</span>' :
+                '<span style="color: var(--accent-danger);">✗ Try again!</span>';
+        }
+
+        // ==================== UTILITIES ====================
+        function copyCode(id) {
+            const code = document.getElementById(id).textContent;
+            navigator.clipboard.writeText(code);
+            event.target.textContent = '✓ Copied!';
+            setTimeout(() => event.target.textContent = 'Copy Code', 2000);
+        }
+    </script>
+</body>
+</html>
